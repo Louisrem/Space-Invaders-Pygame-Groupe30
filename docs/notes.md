@@ -146,4 +146,4 @@ De plus, au départ, les ennemis apparaissent à des positions aléatoires (ne s
 
 **Solution possible 4.3.**
 
-Placer les ennemis en grille en haut de l'écran au début de chaque vague, et centraliser la direction horizontale (`direction = 1` ou `-1`) pour tout le groupe. À chaque tour, tous les ennemis avancent ensemble dans la même direction. Ainsi, dès que l'un d'entre eux atteint un bord de l'écran, tout le bloc descend d'un cran et inverse son sens de déplacement en même temps. Concrètement, l'idée serait de passer d'un comportement individuel à un comportement de groupe avec une classe
+Placer les ennemis en grille en haut de l'écran au début de chaque vague, et centraliser la direction horizontale (`direction = 1` ou `-1`) pour tout le groupe. À chaque tour, tous les ennemis avancent ensemble dans la même direction. Ainsi, dès que l'un d'entre eux atteint un bord de l'écran, tout le bloc descend d'un cran et inverse son sens de déplacement en même temps. Concrètement, l'idée serait de passer d'un comportement individuel à un comportement de groupe avec une classe s
