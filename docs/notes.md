@@ -146,4 +146,13 @@ De plus, au départ, les ennemis apparaissent à des positions aléatoires (ne s
 
 **Solution possible 4.3.**
 
-Placer les ennemis en grille en haut de l'écran au début de chaque vague, et centraliser la direction horizontale (`direction = 1` ou `-1`) pour tout le groupe. À chaque tour, tous les ennemis avancent ensemble dans la même direction. Ainsi, dès que l'un d'entre eux atteint un bord de l'écran, tout le bloc descend d'un cran et inverse son sens de déplacement en même temps. Concrètement, l'idée serait de passer d'un comportement individuel à un comportement de groupe avec une classe s
+Placer les ennemis en grille en haut de l'écran au début de chaque vague, et centraliser la direction horizontale (`direction = 1` ou `-1`) pour tout le groupe. À chaque tour, tous les ennemis avancent ensemble dans la même direction. Ainsi, dès que l'un d'entre eux atteint un bord de l'écran, tout le bloc descend d'un cran et inverse son sens de déplacement en même temps. Concrètement, l'idée serait de passer d'un comportement individuel à un comportement de groupe avec une classe
+
+
+**Problème 4.4** **Un tir désactivé peut encore toucher un ennemi**
+
+**Quand ?** Près d’un bord de l’écran, un seul tir peut rapporter deux points. J’ai reproduit le bug au bord gauche : avec un seul appui sur Espace, le score est passé de 0 à 2.
+
+**Pourquoi ?** La boucle appelle `isCollision(...)` pour chaque ennemi. Au premier impact, elle désactive le tir (`bullet_state = "ready"`) et remet `bulletY` à `480`. Elle continue ensuite à vérifier les autres ennemis avec ces coordonnées. Si un ennemi vient de descendre au bord de l’écran et se retrouve à moins de 27 pixels de cette position, le jeu compte un deuxième impact alors que le tir est déjà désactivé.
+
+Donc, c'est autant un bug de logique (on peut le corriger directement avec `bullet_state == "fire"`) mais c'est également un problème avec la POO. Aujourd'hui, la boucle remet en "ready" mais ses coordonnées restent disponibles, donc elle peut encorer les utiliser par erreur. Cela illustre l'intérêt de gérer explicitement la durée de vie des projectiles. En parcourant uniquement les tirs actifs, la boucle évite de tester des collisions avec un tir déjà consommé.
