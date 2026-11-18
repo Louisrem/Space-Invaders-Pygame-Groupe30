@@ -156,3 +156,31 @@ Placer les ennemis en grille en haut de l'écran au début de chaque vague, et c
 **Pourquoi ?** La boucle appelle `isCollision(...)` pour chaque ennemi. Au premier impact, elle désactive le tir (`bullet_state = "ready"`) et remet `bulletY` à `480`. Elle continue ensuite à vérifier les autres ennemis avec ces coordonnées. Si un ennemi vient de descendre au bord de l’écran et se retrouve à moins de 27 pixels de cette position, le jeu compte un deuxième impact alors que le tir est déjà désactivé.
 
 Donc, c'est autant un bug de logique (on peut le corriger directement avec `bullet_state == "fire"`) mais c'est également un problème avec la POO. Aujourd'hui, la boucle remet en "ready" mais ses coordonnées restent disponibles, donc elle peut encorer les utiliser par erreur. Cela illustre l'intérêt de gérer explicitement la durée de vie des projectiles. En parcourant uniquement les tirs actifs, la boucle évite de tester des collisions avec un tir déjà consommé.
+
+**Problème 5.1 : La gestion des tirs**
+
+Le programme gère le tir avec des variables globales. Et la fonction `fire_bullet()`modifie l'état du tir et le dessine. Si on veut ajouter un autre type de tir, on devrait modifier plusieurs endroits de la boucle.
+
+**Solution possible 5**
+
+Une classe Tirs permettrait de regrouper les données et le comportement de chaque tir. Cela permettrait à la boucle principale de gérer plusieurs types de tirs.
+
+**Problème 5.2 - problème de hitbox**
+
+Le jeu dessine le projectile avec un décalage de 16 pixels à droite et de 10 pixels vers le bas.
+
+```python
+screen.blit(bulletImg, (x + 16, y + 10))
+```
+
+Ensuite, le test de collision utilise les coordonnées sans décalage.
+
+```python
+collision = isCollision(enemyX[i], enemyY[i], bulletX, bulletY)
+```
+
+Le jeu compte un impact seulement en dessous de 27 px (`if distance < 27`). Donc concrètement, le programme compare 2 points avec un seuil fixe, alors qu'à l'écran le tir et l'ennemi occupent chacun une surface
+
+**Solution possible 5.2**
+
+Le fait de créer une classe (comme on l'a dit dans 5.1) pour les Tirs avec des attributs d'instance pour sa position et sa taille. Avec ces attributs, on pourrait alligner la zone de collision avec son affichage. Et donc vérifier si elle chevauche celle d'un ennemi. (Et on pourrait donc avec des tailles différentes selon le type de tir, et du coup le test de collision va s'adapter)
