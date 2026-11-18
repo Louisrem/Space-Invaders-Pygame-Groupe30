@@ -184,3 +184,16 @@ Le jeu compte un impact seulement en dessous de 27 px (`if distance < 27`). Donc
 **Solution possible 5.2**
 
 Le fait de créer une classe (comme on l'a dit dans 5.1) pour les Tirs avec des attributs d'instance pour sa position et sa taille. Avec ces attributs, on pourrait alligner la zone de collision avec son affichage. Et donc vérifier si elle chevauche celle d'un ennemi. (Et on pourrait donc avec des tailles différentes selon le type de tir, et du coup le test de collision va s'adapter)
+
+**Problème 6**
+
+Lorsqu'on veut importer un module de main.py, cela lance le jeu.
+
+**Solution 6**
+
+Il faudrait mettre le démarrage dans une fonction `main()` et de l'appeler seulement quand tu lances le fichier directement :
+
+```python
+if __name__ == "__main__":
+    main()
+```
