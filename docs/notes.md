@@ -197,3 +197,15 @@ Il faudrait mettre le démarrage dans une fonction `main()` et de l'appeler seul
 if __name__ == "__main__":
     main()
 ```
+
+**Problème 7 : Les déplacements sont en durs**
+
+Si on insère de nouveaux types d'ennemis (+ grand), il pourrait dépasser le bord.
+
+**Solution 7**
+
+Calculer la limite à partir de la larguer de chaque entité
+
+```python
+limite_droite = largeur_fenetre - entite.largeur
+```
