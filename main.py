@@ -1,8 +1,9 @@
 import pygame
 
 from jeu.vaisseau import Vaisseau
-from jeu.interface_pygame import dessiner_vaisseau, dessiner_flotte
+from jeu.interface_pygame import dessiner_vaisseau, dessiner_flotte, dessiner_projectile
 from jeu.flotte import Flotte
+from jeu.projectiles import Projectile
 
 def main():
     pygame.display.init()
@@ -14,10 +15,17 @@ def main():
     horloge = pygame.time.Clock()
     en_cours = True
 
+    projectiles = []
+
     while en_cours:
         for evenement in pygame.event.get():
             if evenement.type == pygame.QUIT:
                 en_cours = False
+            elif evenement.type == pygame.KEYDOWN and evenement.key == pygame.K_SPACE:
+                x = joueur.x + joueur.largeur // 2
+                y = joueur.y
+                projectiles.append(Projectile(x,y))
+                print(len(projectiles))
 
         touches = pygame.key.get_pressed()
 
@@ -29,9 +37,15 @@ def main():
 
         flotte.deplacer(ecran.get_width())
 
+        for projectile in projectiles:
+            projectile.avancer()
+
+
         ecran.fill((0,0,0))
         dessiner_vaisseau(ecran,joueur)
         dessiner_flotte(ecran,flotte)
+        for projectile in projectiles:
+            dessiner_projectile(ecran, projectile)
         pygame.display.flip()
 
         horloge.tick(60)

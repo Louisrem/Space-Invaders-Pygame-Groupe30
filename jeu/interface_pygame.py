@@ -1,3 +1,5 @@
+from curses.textpad import rectangle
+
 import pygame
 
 def dessiner_vaisseau(ecran, vaisseau):
@@ -12,3 +14,7 @@ def dessiner_flotte(ecran, flotte):
             ennemi.x, ennemi.y, ennemi.largeur, ennemi.hauteur
         )
         pygame.draw.rect(ecran,(240,100,100), rectangle)
+
+def dessiner_projectile(ecran, projectile):
+    rectangle = pygame.Rect(projectile.x - 3, projectile.y - 12, 6, 12)
+    pygame.draw.rect(ecran, (255,255,255), rectangle)
