@@ -5,6 +5,7 @@ from jeu.interface_pygame import dessiner_vaisseau, dessiner_flotte, dessiner_pr
 from jeu.flotte import Flotte
 from jeu.projectiles import Projectile
 from jeu.partie import Partie
+from jeu.vagues import VAGUES
 
 def main():
     pygame.display.init()
@@ -12,7 +13,7 @@ def main():
     pygame.display.set_caption("Space Invaders - Groupe 30")
 
     joueur = Vaisseau(380,550)
-    flotte = Flotte(2,5)
+    flotte = Flotte(VAGUES[1])
     horloge = pygame.time.Clock()
     en_cours = True
 

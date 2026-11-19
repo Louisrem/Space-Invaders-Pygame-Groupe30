@@ -1,16 +1,17 @@
 from jeu.ennemis import Ennemi
 
 class Flotte:
-    def __init__(self, lignes, colonnes):
+    def __init__(self, grille):
         self.ennemis = []
         self.direction = 1
         self.vitesse = 2
 
-        for ligne in range(lignes):
-            for colonne in range(colonnes):
-                x = 230 + colonne * 75
-                y = 60 + ligne * 45
-                self.ennemis.append(Ennemi(x,y))
+        for ligne, rangee in enumerate(grille):
+            for colonne, case in enumerate(rangee):
+                if case == "N":
+                    x = 230 + colonne * 75
+                    y = 60 + ligne * 45
+                    self.ennemis.append(Ennemi(x,y))
 
     def deplacer(self, largeur_ecran):
         distance = self.direction * self.vitesse
