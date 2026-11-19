@@ -1,4 +1,5 @@
 from jeu.ennemis import Ennemi
+from jeu.ennemis.comportements_tir import TirSimple
 
 class Flotte:
     def __init__(self, grille):
@@ -8,10 +9,19 @@ class Flotte:
 
         for ligne, rangee in enumerate(grille):
             for colonne, case in enumerate(rangee):
+                if case == ".":
+                    continue
+                x = 230 + colonne * 75
+                y = 60 + ligne * 45
+
                 if case == "N":
-                    x = 230 + colonne * 75
-                    y = 60 + ligne * 45
-                    self.ennemis.append(Ennemi(x,y))
+                    ennemi = Ennemi(x, y)
+                elif case == "T":
+                    ennemi = Ennemi(x, y, TirSimple())
+                else:
+                    raise ValueError(f"Case de vague inconnue : {case}")
+
+                self.ennemis.append(ennemi)
 
     def deplacer(self, largeur_ecran):
         distance = self.direction * self.vitesse

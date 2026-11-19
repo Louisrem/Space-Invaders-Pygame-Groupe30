@@ -1,3 +1,6 @@
+from jeu.flotte import Flotte
+from jeu.vagues import VAGUES
+
 def rectangles_se_chevauchent(zone_a, zone_b):
     x_a, y_a, largeur_a, hauteur_a = zone_a
     x_b, y_b, largeur_b, hauteur_b = zone_b
@@ -29,3 +32,13 @@ class Partie:
         for projectile in self.projectiles[:]:
             if projectile.est_sorti_par_le_haut():
                 self.projectiles.remove(projectile)
+
+    def verifier_fin_vague(self):
+        if self.flotte.ennemis:
+            return
+
+        vague_suivante = self.niveau + 1
+
+        if vague_suivante in VAGUES:
+            self.flotte = Flotte(VAGUES[vague_suivante])
+            self.niveau = vague_suivante

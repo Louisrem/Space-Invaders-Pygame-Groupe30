@@ -41,17 +41,18 @@ def main():
         if touches[pygame.K_RIGHT]:
             joueur.deplacer(5,ecran.get_width())
 
-        flotte.deplacer(ecran.get_width())
+        partie.flotte.deplacer(ecran.get_width())
 
         for projectile in projectiles:
             projectile.avancer()
 
         partie.gerer_collisions()
+        partie.verifier_fin_vague()
         partie.retirer_projectiles_hors_ecran()
 
         ecran.fill((0,0,0))
         dessiner_vaisseau(ecran,joueur)
-        dessiner_flotte(ecran,flotte)
+        dessiner_flotte(ecran,partie.flotte)
         for projectile in projectiles:
             dessiner_projectile(ecran, projectile)
 
