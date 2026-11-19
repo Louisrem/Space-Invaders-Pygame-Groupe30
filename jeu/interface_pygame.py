@@ -21,6 +21,10 @@ def dessiner_score(ecran, police, score):
     texte = police.render(f"Score : {score}", True, (255,255,255))
     ecran.blit(texte, (15,15 ))
 
+def dessiner_vies(ecran, police, vies):
+    texte = police.render(f"VIES : {vies}", True, (255, 255, 255))
+    ecran.blit(texte, (15,37))
+
 def dessiner_vague(ecran, police, niveau, ennemis_restants):
     blanc = (255, 255, 255)
     largeur = ecran.get_width()

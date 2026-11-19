@@ -53,3 +53,9 @@ class Partie:
 
             if projectile.est_sorti_par_le_bas(hauteur_ecran):
                 self.projectiles_ennemis.remove(projectile)
+
+    def gerer_impacts_joueur(self, joueur):
+        for projectile in self.projectiles_ennemis[:]:
+            if rectangles_se_chevauchent(projectile.zone_collision(), joueur.zone_collision()):
+                self.projectiles_ennemis.remove(projectile)
+                joueur.perdre_vie()
