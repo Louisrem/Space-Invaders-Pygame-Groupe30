@@ -4,6 +4,7 @@ from jeu.vaisseau import Vaisseau
 from jeu.interface_pygame import dessiner_vaisseau, dessiner_flotte, dessiner_projectile
 from jeu.flotte import Flotte
 from jeu.projectiles import Projectile
+from jeu.partie import Partie
 
 def main():
     pygame.display.init()
@@ -16,6 +17,7 @@ def main():
     en_cours = True
 
     projectiles = []
+    partie = Partie(flotte, projectiles)
 
     while en_cours:
         for evenement in pygame.event.get():
@@ -40,6 +42,7 @@ def main():
         for projectile in projectiles:
             projectile.avancer()
 
+        partie.gerer_collisions()
 
         ecran.fill((0,0,0))
         dessiner_vaisseau(ecran,joueur)

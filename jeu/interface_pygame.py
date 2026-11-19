@@ -16,5 +16,5 @@ def dessiner_flotte(ecran, flotte):
         pygame.draw.rect(ecran,(240,100,100), rectangle)
 
 def dessiner_projectile(ecran, projectile):
-    rectangle = pygame.Rect(projectile.x - 3, projectile.y - 12, 6, 12)
+    rectangle = pygame.Rect(projectile.zone_collision())
     pygame.draw.rect(ecran, (255,255,255), rectangle)
