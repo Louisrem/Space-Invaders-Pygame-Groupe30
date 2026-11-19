@@ -18,3 +18,7 @@ def dessiner_flotte(ecran, flotte):
 def dessiner_projectile(ecran, projectile):
     rectangle = pygame.Rect(projectile.zone_collision())
     pygame.draw.rect(ecran, (255,255,255), rectangle)
+
+def dessiner_score(ecran, police, score):
+    texte = police.render(f"Score : {score}", True, (255,255,255))
+    ecran.blit(texte, (15,15 ))

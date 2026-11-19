@@ -1,7 +1,7 @@
 import pygame
 
 from jeu.vaisseau import Vaisseau
-from jeu.interface_pygame import dessiner_vaisseau, dessiner_flotte, dessiner_projectile
+from jeu.interface_pygame import dessiner_vaisseau, dessiner_flotte, dessiner_projectile, dessiner_score
 from jeu.flotte import Flotte
 from jeu.projectiles import Projectile
 from jeu.partie import Partie
@@ -18,6 +18,9 @@ def main():
 
     projectiles = []
     partie = Partie(flotte, projectiles)
+
+    pygame.font.init()
+    police = pygame.font.Font(None, 32)
 
     while en_cours:
         for evenement in pygame.event.get():
@@ -49,6 +52,9 @@ def main():
         dessiner_flotte(ecran,flotte)
         for projectile in projectiles:
             dessiner_projectile(ecran, projectile)
+
+        dessiner_score(ecran, police, partie.score)
+
         pygame.display.flip()
 
         horloge.tick(60)
