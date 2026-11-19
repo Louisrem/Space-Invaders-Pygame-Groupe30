@@ -16,6 +16,7 @@ class Partie:
         self.projectiles = projectiles
         self.score = 0
         self.niveau = 1
+        self.projectiles_ennemis = []
 
     def gerer_collisions(self):
         for projectile in self.projectiles[:]:
@@ -42,3 +43,13 @@ class Partie:
         if vague_suivante in VAGUES:
             self.flotte = Flotte(VAGUES[vague_suivante])
             self.niveau = vague_suivante
+
+    def actualiser_tirs_ennemis(self, hauteur_ecran):
+        for ennemi in self.flotte.ennemis:
+            self.projectiles_ennemis.extend(ennemi.tirer())
+
+        for projectile in self.projectiles_ennemis[:]:
+            projectile.avancer()
+
+            if projectile.est_sorti_par_le_bas(hauteur_ecran):
+                self.projectiles_ennemis.remove(projectile)

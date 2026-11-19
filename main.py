@@ -49,12 +49,16 @@ def main():
         partie.gerer_collisions()
         partie.verifier_fin_vague()
         partie.retirer_projectiles_hors_ecran()
+        partie.actualiser_tirs_ennemis(ecran.get_height())
 
         ecran.fill((0,0,0))
         dessiner_vaisseau(ecran,joueur)
         dessiner_flotte(ecran,partie.flotte)
         for projectile in projectiles:
             dessiner_projectile(ecran, projectile)
+
+        for projectile in partie.projectiles_ennemis:
+            dessiner_projectile(ecran,projectile)
 
         dessiner_score(ecran, police, partie.score)
         dessiner_vague(ecran, police, partie.niveau, len(partie.flotte.ennemis))

@@ -17,3 +17,7 @@ class Projectile:
 
     def est_sorti_par_le_haut(self):
         return self.y <= 0
+
+    def est_sorti_par_le_bas(self, hauteur_ecran):
+        haut = self.y - self.hauteur
+        return haut >= hauteur_ecran
