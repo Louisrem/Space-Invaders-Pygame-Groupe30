@@ -13,3 +13,6 @@ class Projectile:
         gauche = self.x - self.largeur // 2
         haut = self.y - self.hauteur
         return (gauche, haut, self.largeur, self.hauteur)
+
+    def est_sorti_par_le_haut(self):
+        return self.y <= 0

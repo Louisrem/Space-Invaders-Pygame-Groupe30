@@ -46,6 +46,7 @@ def main():
             projectile.avancer()
 
         partie.gerer_collisions()
+        partie.retirer_projectiles_hors_ecran()
 
         ecran.fill((0,0,0))
         dessiner_vaisseau(ecran,joueur)

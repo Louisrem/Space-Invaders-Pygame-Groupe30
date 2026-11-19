@@ -23,3 +23,7 @@ class Partie:
                     self.projectiles.remove(projectile)
                     self.score += 1
                     break
+    def retirer_projectiles_hors_ecran(self):
+        for projectile in self.projectiles[:]:
+            if projectile.est_sorti_par_le_haut():
+                self.projectiles.remove(projectile)
