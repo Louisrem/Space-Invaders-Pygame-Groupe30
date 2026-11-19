@@ -1,7 +1,8 @@
 import pygame
 
 from jeu.vaisseau import Vaisseau
-from jeu.interface_pygame import dessiner_vaisseau
+from jeu.interface_pygame import dessiner_vaisseau, dessiner_flotte
+from jeu.flotte import Flotte
 
 def main():
     pygame.display.init()
@@ -9,6 +10,7 @@ def main():
     pygame.display.set_caption("Space Invaders - Groupe 30")
 
     joueur = Vaisseau(380,550)
+    flotte = Flotte(2,5)
     horloge = pygame.time.Clock()
     en_cours = True
 
@@ -25,8 +27,11 @@ def main():
         if touches[pygame.K_RIGHT]:
             joueur.deplacer(5)
 
+        flotte.deplacer(ecran.get_width())
+
         ecran.fill((0,0,0))
         dessiner_vaisseau(ecran,joueur)
+        dessiner_flotte(ecran,flotte)
         pygame.display.flip()
 
         horloge.tick(60)
