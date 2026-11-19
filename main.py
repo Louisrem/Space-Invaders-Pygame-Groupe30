@@ -26,7 +26,7 @@ def main():
         for evenement in pygame.event.get():
             if evenement.type == pygame.QUIT:
                 en_cours = False
-            elif evenement.type == pygame.KEYDOWN and evenement.key == pygame.K_SPACE:
+            elif evenement.type == pygame.KEYDOWN and evenement.key == pygame.K_SPACE and not projectiles:
                 x = joueur.x + joueur.largeur // 2
                 y = joueur.y
                 projectiles.append(Projectile(x,y))
