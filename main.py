@@ -1,7 +1,7 @@
 import pygame
 
 from jeu.vaisseau import Vaisseau
-from jeu.interface_pygame import dessiner_vaisseau, dessiner_flotte, dessiner_projectile, dessiner_score
+from jeu.interface_pygame import dessiner_vaisseau, dessiner_flotte, dessiner_projectile, dessiner_score, dessiner_vague
 from jeu.flotte import Flotte
 from jeu.projectiles import Projectile
 from jeu.partie import Partie
@@ -55,6 +55,7 @@ def main():
             dessiner_projectile(ecran, projectile)
 
         dessiner_score(ecran, police, partie.score)
+        dessiner_vague(ecran, police, partie.niveau, len(partie.flotte.ennemis))
 
         pygame.display.flip()
 

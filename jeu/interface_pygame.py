@@ -1,5 +1,3 @@
-from curses.textpad import rectangle
-
 import pygame
 
 def dessiner_vaisseau(ecran, vaisseau):
@@ -22,3 +20,13 @@ def dessiner_projectile(ecran, projectile):
 def dessiner_score(ecran, police, score):
     texte = police.render(f"Score : {score}", True, (255,255,255))
     ecran.blit(texte, (15,15 ))
+
+def dessiner_vague(ecran, police, niveau, ennemis_restants):
+    blanc = (255, 255, 255)
+    largeur = ecran.get_width()
+
+    vague = police.render(f"VAGUE {niveau}", True, blanc)
+    ennemis = police.render(f"ENNEMIS RESTANTS : {ennemis_restants}", True, blanc)
+
+    ecran.blit(vague, vague.get_rect(midtop=(largeur // 2, 15)))
+    ecran.blit(ennemis, ennemis.get_rect(topright=(largeur - 15, 15)))

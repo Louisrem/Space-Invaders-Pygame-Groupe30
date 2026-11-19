@@ -12,6 +12,7 @@ class Partie:
         self.flotte = flotte
         self.projectiles = projectiles
         self.score = 0
+        self.niveau = 1
 
     def gerer_collisions(self):
         for projectile in self.projectiles[:]:
