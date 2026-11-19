@@ -22,10 +22,10 @@ def main():
         touches = pygame.key.get_pressed()
 
         if touches[pygame.K_LEFT]:
-            joueur.deplacer(-5)
+            joueur.deplacer(-5, ecran.get_width())
 
         if touches[pygame.K_RIGHT]:
-            joueur.deplacer(5)
+            joueur.deplacer(5,ecran.get_width())
 
         flotte.deplacer(ecran.get_width())
 
