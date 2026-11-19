@@ -34,3 +34,8 @@ def dessiner_vague(ecran, police, niveau, ennemis_restants):
 
     ecran.blit(vague, vague.get_rect(midtop=(largeur // 2, 15)))
     ecran.blit(ennemis, ennemis.get_rect(topright=(largeur - 15, 15)))
+
+def dessiner_defaite(ecran, police):
+    message = police.render("PARTIE TERMINÉE", True, (255, 255, 255))
+    position = message.get_rect(center=ecran.get_rect().center)
+    ecran.blit(message, position)

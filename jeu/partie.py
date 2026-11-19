@@ -1,5 +1,6 @@
 from jeu.flotte import Flotte
 from jeu.vagues import VAGUES
+from jeu.etat_partie import EtatPartie
 
 def rectangles_se_chevauchent(zone_a, zone_b):
     x_a, y_a, largeur_a, hauteur_a = zone_a
@@ -17,6 +18,7 @@ class Partie:
         self.score = 0
         self.niveau = 1
         self.projectiles_ennemis = []
+        self.etat = EtatPartie.EN_COURS
 
     def gerer_collisions(self):
         for projectile in self.projectiles[:]:
@@ -43,6 +45,17 @@ class Partie:
         if vague_suivante in VAGUES:
             self.flotte = Flotte(VAGUES[vague_suivante])
             self.niveau = vague_suivante
+
+    def verifier_defaite(self, joueur):
+        if joueur.vies == 0:
+            self.etat = EtatPartie.DEFAITE
+            return
+
+        for ennemi in self.flotte.ennemis:
+            bas_ennemi = ennemi.y + ennemi.hauteur
+            if bas_ennemi >= joueur.y:
+                self.etat = EtatPartie.DEFAITE
+                return
 
     def actualiser_tirs_ennemis(self, hauteur_ecran):
         for ennemi in self.flotte.ennemis:

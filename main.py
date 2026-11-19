@@ -1,11 +1,12 @@
 import pygame
 
 from jeu.vaisseau import Vaisseau
-from jeu.interface_pygame import dessiner_vaisseau, dessiner_flotte, dessiner_projectile, dessiner_score, dessiner_vague, dessiner_vies
+from jeu.interface_pygame import dessiner_vaisseau, dessiner_flotte, dessiner_projectile, dessiner_score, dessiner_vague, dessiner_vies, dessiner_defaite
 from jeu.flotte import Flotte
 from jeu.projectiles import Projectile
 from jeu.partie import Partie
 from jeu.vagues import VAGUES
+from jeu.etat_partie import EtatPartie
 
 def main():
     pygame.display.init()
@@ -27,30 +28,38 @@ def main():
         for evenement in pygame.event.get():
             if evenement.type == pygame.QUIT:
                 en_cours = False
-            elif evenement.type == pygame.KEYDOWN and evenement.key == pygame.K_SPACE and not projectiles:
+            elif (
+                evenement.type == pygame.KEYDOWN
+                and evenement.key == pygame.K_SPACE
+                and not projectiles
+                and partie.etat == EtatPartie.EN_COURS
+            ):
                 x = joueur.x + joueur.largeur // 2
                 y = joueur.y
                 projectiles.append(Projectile(x,y))
                 print(len(projectiles))
+        if partie.etat == EtatPartie.EN_COURS:
+            touches = pygame.key.get_pressed()
 
-        touches = pygame.key.get_pressed()
+            if touches[pygame.K_LEFT]:
+                joueur.deplacer(-5, ecran.get_width())
 
-        if touches[pygame.K_LEFT]:
-            joueur.deplacer(-5, ecran.get_width())
+            if touches[pygame.K_RIGHT]:
+                joueur.deplacer(5, ecran.get_width())
 
-        if touches[pygame.K_RIGHT]:
-            joueur.deplacer(5,ecran.get_width())
+            partie.flotte.deplacer(ecran.get_width())
 
-        partie.flotte.deplacer(ecran.get_width())
+            for projectile in projectiles:
+                projectile.avancer()
 
-        for projectile in projectiles:
-            projectile.avancer()
+            partie.gerer_collisions()
+            partie.retirer_projectiles_hors_ecran()
+            partie.actualiser_tirs_ennemis(ecran.get_height())
+            partie.gerer_impacts_joueur(joueur)
+            partie.verifier_defaite(joueur)
 
-        partie.gerer_collisions()
-        partie.verifier_fin_vague()
-        partie.retirer_projectiles_hors_ecran()
-        partie.actualiser_tirs_ennemis(ecran.get_height())
-        partie.gerer_impacts_joueur(joueur)
+            if partie.etat == EtatPartie.EN_COURS:
+                partie.verifier_fin_vague()
 
         ecran.fill((0,0,0))
         dessiner_vaisseau(ecran,joueur)
@@ -64,6 +73,9 @@ def main():
         dessiner_score(ecran, police, partie.score)
         dessiner_vies(ecran, police, joueur.vies)
         dessiner_vague(ecran, police, partie.niveau, len(partie.flotte.ennemis))
+
+        if partie.etat == EtatPartie.DEFAITE:
+            dessiner_defaite(ecran, police)
 
         pygame.display.flip()
 
