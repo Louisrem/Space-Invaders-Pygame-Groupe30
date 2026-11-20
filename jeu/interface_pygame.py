@@ -50,9 +50,10 @@ def dessiner_vague(ecran, police, niveau, ennemis_restants):
     ecran.blit(vague, vague.get_rect(midtop=(largeur // 2, 15)))
     ecran.blit(ennemis, ennemis.get_rect(topright=(largeur - 15, 15)))
 
-def dessiner_message_centre(ecran, police, texte):
+def dessiner_message_centre(ecran, police, texte, decalage_y=0):
     message = police.render(texte, True, (255, 255, 255))
-    position = message.get_rect(center=ecran.get_rect().center)
+    centre_x, centre_y = ecran.get_rect().center
+    position = message.get_rect(center=(centre_x, centre_y + decalage_y))
     ecran.blit(message, position)
 
 def dessiner_coeur(ecran, coeur):

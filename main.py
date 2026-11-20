@@ -22,18 +22,21 @@ from jeu.partie import Partie
 from jeu.vagues import VAGUES
 from jeu.etat_partie import EtatPartie
 
+
+def creer_partie(etat_initial):
+    joueur = Vaisseau(380, 550)
+    flotte = Flotte(VAGUES[1])
+    partie = Partie(flotte, [], etat_initial=etat_initial)
+    return joueur, partie
+
 def main():
     pygame.display.init()
     ecran = pygame.display.set_mode((800,600))
     pygame.display.set_caption("Space Invaders - Groupe 30")
-
-    joueur = Vaisseau(380,550)
-    flotte = Flotte(VAGUES[1])
     horloge = pygame.time.Clock()
     en_cours = True
 
-    projectiles = []
-    partie = Partie(flotte, projectiles, etat_initial=EtatPartie.MENU)
+    joueur, partie = creer_partie(EtatPartie.MENU)
 
     pygame.font.init()
     police = pygame.font.Font(None, 32)
@@ -43,17 +46,19 @@ def main():
             if evenement.type == pygame.QUIT:
                 en_cours = False
             elif evenement.type == pygame.KEYDOWN and evenement.key == pygame.K_RETURN:
-                partie.demarrer()
+                if partie.etat == EtatPartie.MENU:
+                    partie.demarrer()
+                elif partie.etat in (EtatPartie.VICTOIRE, EtatPartie.DEFAITE):
+                    joueur, partie = creer_partie(EtatPartie.EN_COURS)
             elif (
                 evenement.type == pygame.KEYDOWN
                 and evenement.key == pygame.K_SPACE
-                and not projectiles
+                and not partie.projectiles
                 and partie.etat == EtatPartie.EN_COURS
             ):
                 x = joueur.x + joueur.largeur // 2
                 y = joueur.y
-                projectiles.append(Projectile(x,y))
-                print(len(projectiles))
+                partie.projectiles.append(Projectile(x,y))
             elif evenement.type == pygame.KEYDOWN and evenement.key == pygame.K_x:
                 partie.tirer_mine(joueur, ecran.get_height())
 
@@ -74,7 +79,7 @@ def main():
 
             partie.flotte.deplacer(ecran.get_width())
 
-            for projectile in projectiles:
+            for projectile in partie.projectiles:
                 projectile.avancer()
 
             partie.gerer_collisions()
@@ -100,7 +105,7 @@ def main():
         if partie.explosion_mine is not None:
             dessiner_explosion_mine(ecran, partie.explosion_mine)
 
-        for projectile in projectiles:
+        for projectile in partie.projectiles:
             dessiner_projectile(ecran, projectile)
 
         for projectile in partie.projectiles_ennemis:
@@ -118,6 +123,9 @@ def main():
             dessiner_message_centre(ecran, police, "PARTIE TERMINÉE")
         elif partie.etat == EtatPartie.VICTOIRE:
             dessiner_message_centre(ecran, police, "VICTOIRE !")
+
+        if partie.etat in (EtatPartie.VICTOIRE, EtatPartie.DEFAITE):
+            dessiner_message_centre(ecran, police, "Entrée pour rejouer", decalage_y=40)
 
         pygame.display.flip()
 
