@@ -2,7 +2,7 @@ from jeu.flotte import Flotte
 from jeu.vagues import BONUS_PAR_VAGUE, VAGUES
 from jeu.etat_partie import EtatPartie
 from random import randint
-from jeu.projectiles import Mine
+from jeu.projectiles import Mine, Projectile
 from time import monotonic
 
 def rectangles_se_chevauchent(zone_a, zone_b):
@@ -22,6 +22,8 @@ class Partie:
         self.niveau = 1
         self.projectiles_ennemis = []
         self.etat = etat_initial
+        self.tirs_normaux = 0
+        self.mines_lancees = 0
 
         self.debut = None
         self.fin = None
@@ -71,6 +73,12 @@ class Partie:
     def ennemis_avant_mine(self):
         return max(0, self.score_prochaine_mine - self.score)
 
+    def tirer_normal(self, joueur):
+        if self.etat == EtatPartie.EN_COURS and not self.projectiles:
+            x = joueur.x + joueur.largeur // 2
+            self.projectiles.append(Projectile(x, joueur.y))
+            self.tirs_normaux += 1
+
     def tirer_mine(self, joueur, hauteur_ecran):
         if (
             self.etat == EtatPartie.EN_COURS
@@ -79,6 +87,7 @@ class Partie:
         ):
             x = joueur.x + joueur.largeur // 2
             self.mine = Mine(x, joueur.y, hauteur_ecran // 2)
+            self.mines_lancees += 1
             self.score_prochaine_mine = self.score + 5
 
     def actualiser_mine(self):

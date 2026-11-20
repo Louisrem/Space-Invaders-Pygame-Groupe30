@@ -110,3 +110,12 @@ def dessiner_chrono(ecran, police, duree_secondes):
     texte = police.render(f"Temps : {minutes:02d}:{secondes:02d}", True, (255, 255, 255))
     position = texte.get_rect(topright=(ecran.get_width() - 15, 37))
     ecran.blit(texte, position)
+
+
+def dessiner_compteurs_tirs(ecran, police, tirs_normaux, mines_lancees):
+    lignes = (f"Tirs utilisés : {tirs_normaux}", f"Mines utilisées : {mines_lancees}")
+    droite = ecran.get_width() - 15
+
+    for ligne, haut in zip(lignes, (59, 81)):
+        texte = police.render(ligne, True, (255, 255, 255))
+        ecran.blit(texte, texte.get_rect(topright=(droite, haut)))

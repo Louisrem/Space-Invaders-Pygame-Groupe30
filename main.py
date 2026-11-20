@@ -15,10 +15,10 @@ from jeu.interface_pygame import (
     dessiner_vies,
     dessiner_etat_mine,
     dessiner_menu,
-    dessiner_chrono
+    dessiner_chrono,
+    dessiner_compteurs_tirs,
 )
 from jeu.flotte import Flotte
-from jeu.projectiles import Projectile
 from jeu.partie import Partie
 from jeu.vagues import VAGUES
 from jeu.etat_partie import EtatPartie
@@ -51,15 +51,8 @@ def main():
                     partie.demarrer()
                 elif partie.etat in (EtatPartie.VICTOIRE, EtatPartie.DEFAITE):
                     joueur, partie = creer_partie(EtatPartie.EN_COURS)
-            elif (
-                evenement.type == pygame.KEYDOWN
-                and evenement.key == pygame.K_SPACE
-                and not partie.projectiles
-                and partie.etat == EtatPartie.EN_COURS
-            ):
-                x = joueur.x + joueur.largeur // 2
-                y = joueur.y
-                partie.projectiles.append(Projectile(x,y))
+            elif evenement.type == pygame.KEYDOWN and evenement.key == pygame.K_SPACE:
+                partie.tirer_normal(joueur)
             elif evenement.type == pygame.KEYDOWN and evenement.key == pygame.K_x:
                 partie.tirer_mine(joueur, ecran.get_height())
 
@@ -118,6 +111,9 @@ def main():
 
         if partie.etat == EtatPartie.EN_COURS:
             dessiner_chrono(ecran, police, partie.duree_secondes())
+            dessiner_compteurs_tirs(
+                ecran, police, partie.tirs_normaux, partie.mines_lancees
+            )
 
         dessiner_etat_mine(
             ecran, police, partie.mine is not None, partie.ennemis_avant_mine()
@@ -133,6 +129,12 @@ def main():
             minutes, secondes = divmod(partie.duree_secondes(), 60)
             texte_temps = f"Temps : {minutes:02d}:{secondes:02d}"
             dessiner_message_centre(ecran, police, texte_temps, decalage_y=80)
+
+            texte_tirs = f"Tirs normaux utilisés : {partie.tirs_normaux}"
+            dessiner_message_centre(ecran, police, texte_tirs, decalage_y=110)
+
+            texte_mines = f"Mines utilisées : {partie.mines_lancees}"
+            dessiner_message_centre(ecran, police, texte_mines, decalage_y=140)
 
         pygame.display.flip()
 
