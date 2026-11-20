@@ -1,8 +1,19 @@
+"""Création des formations et déplacement collectif des ennemis."""
+
 from .catalogue import creer_ennemi
 
 
 class Flotte:
+    """Place les ennemis à partir d'une grille et déplace les groupes.
+    """
+
     def __init__(self, grille):
+        """Crée les ennemis décrits par les rangées de la vague.
+
+        :param grille: Rangées de la formation, du haut vers le bas.
+        :type grille: tuple[str, ...]
+        :raises ValueError: Si une lettre est inconnue du catalogue.
+        """
         self.ennemis = []
         self.direction = 1
         self.direction_rapides = 1
@@ -18,6 +29,20 @@ class Flotte:
                 self.ennemis.append(creer_ennemi(case, x, y))
 
     def _deplacer_groupe(self, groupe, direction, vitesse, largeur_ecran):
+        """Déplace le groupe si aucun ennemi ne dépasse du terrain.
+
+        :param groupe: Ennemis qui partagent le même mouvement.
+        :type groupe: list[Ennemi]
+        :param direction: Sens horizontal, -1 vers la gauche ou 1 vers
+            la droite.
+        :type direction: int
+        :param vitesse: Distance parcourue à chaque tour, en pixels.
+        :type vitesse: int
+        :param largeur_ecran: Largeur du terrain en pixels.
+        :type largeur_ecran: int
+        :return: La direction à garder et un booléen signalant le bord.
+        :rtype: tuple[int, bool]
+        """
         distance = direction * vitesse
 
         for ennemi in groupe: # ici on calcule la position finale
@@ -31,6 +56,14 @@ class Flotte:
         return direction, False
 
     def deplacer(self, largeur_ecran):
+        """Avance les deux groupes et fait descendre la flotte au bord.
+
+        Le groupe normal déclenche la descente. Quand seuls les rapides
+        restent, leur contact avec le bord déclenche la descente.
+
+        :param largeur_ecran: Largeur du terrain en pixels.
+        :type largeur_ecran: int
+        """
         lents = [ennemi for ennemi in self.ennemis if not ennemi.rapide]
         rapides = [ennemi for ennemi in self.ennemis if ennemi.rapide]
 

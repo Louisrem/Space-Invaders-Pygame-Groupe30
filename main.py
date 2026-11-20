@@ -1,3 +1,6 @@
+"""Lance le jeu et relie les entrées clavier, la logique et l'affichage.
+"""
+
 import pygame
 
 from interface.ecrans import dessiner_classement, dessiner_fin_partie, dessiner_menu
@@ -17,12 +20,20 @@ from jeu.vagues import VAGUES
 
 
 def creer_partie(etat_initial):
+    """Crée le vaisseau et la partie prêts pour la première vague.
+
+    :param etat_initial: État de départ, au menu ou directement en jeu.
+    :type etat_initial: EtatPartie
+    :return: Le vaisseau et la partie.
+    :rtype: tuple[Vaisseau, Partie]
+    """
     joueur = Vaisseau(376, 550)
     flotte = Flotte(VAGUES[1])
     partie = Partie(flotte, [], etat_initial=etat_initial)
     return joueur, partie
 
 def main():
+    """Ouvre la fenêtre et exécute la boucle du jeu."""
     pygame.display.init()
     ecran = pygame.display.set_mode((800,600))
     fond = charger_fond(ecran.get_size())

@@ -1,9 +1,17 @@
+"""Lit et enregistre les résultats dans le classement local JSON."""
+
 import json
 from pathlib import Path
 
 FICHIER_CLASSEMENT = Path(__file__).resolve().parent.parent / "classement.json"
 
 def lire_resultats():
+    """Lit les résultats enregistrés dans l'ordre des parties jouées.
+
+    :return: Les résultats, ou une liste vide si le fichier n'existe
+        pas.
+    :rtype: list[dict]
+    """
     if not FICHIER_CLASSEMENT.exists():
         return []
 
@@ -11,10 +19,25 @@ def lire_resultats():
 
 
 def meilleurs_resultats():
+    """Renvoie au plus cinq résultats par score décroissant.
+
+    À score égal, conserve l'ordre d'enregistrement.
+
+    :return: Jusqu'à cinq résultats du classement local.
+    :rtype: list[dict]
+    """
     return sorted(lire_resultats(), key=lambda resultat: resultat["score"], reverse=True)[:5]
 
 
 def enregistrer_resultat(resultat):
+    """Ajoute le résultat d'une partie au classement local.
+
+    Écrit la liste dans un fichier temporaire avant de remplacer le
+    JSON.
+
+    :param resultat: Dictionnaire produit par Partie.resultat().
+    :type resultat: dict
+    """
     resultats = lire_resultats()
     resultats.append(resultat)
 

@@ -1,3 +1,5 @@
+"""Vérifie les règles d'une partie sans ouvrir de fenêtre."""
+
 import unittest
 
 from jeu.entites.ennemis.flotte import Flotte
@@ -8,10 +10,14 @@ from jeu.partie import Partie
 
 
 class TestPartie(unittest.TestCase):
+    """Tests unitaires de l'évolution d'une partie."""
+
     def setUp(self):
+        """Crée un vaisseau neuf pour chaque test."""
         self.joueur = Vaisseau(376, 550)
 
     def test_le_menu_ne_fait_pas_avancer_la_flotte(self):
+        """Vérifie que la flotte bouge seulement après le démarrage."""
         flotte = Flotte(("N",))
         partie = Partie(flotte, [], etat_initial=EtatPartie.MENU)
         position = flotte.ennemis[0].x
@@ -24,12 +30,14 @@ class TestPartie(unittest.TestCase):
         self.assertGreater(flotte.ennemis[0].x, position)
 
     def test_une_flotte_vide_passe_a_la_vague_suivante(self):
+        """Vérifie qu'une vague vidée charge la formation suivante."""
         partie = Partie(Flotte((".",)), [])
         partie.actualiser(self.joueur, 800, 600)
         self.assertEqual(partie.niveau, 2)
         self.assertEqual(len(partie.flotte.ennemis), 15)
 
     def test_un_ennemi_a_la_hauteur_du_vaisseau_declenche_la_defaite(self):
+        """Vérifie la défaite si la flotte atteint le joueur."""
         flotte = Flotte(("N",))
         ennemi = flotte.ennemis[0]
         ennemi.y = self.joueur.y - ennemi.hauteur
@@ -41,6 +49,7 @@ class TestPartie(unittest.TestCase):
         self.assertEqual(partie.resultat()["issue"], "defaite")
 
     def test_la_mine_se_recharge_apres_cinq_eliminations(self):
+        """Vérifie la recharge de la mine après cinq éliminations."""
         flotte = Flotte(("NNNNN",))
         tirs = []
         partie = Partie(flotte, tirs)
