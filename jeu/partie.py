@@ -1,9 +1,11 @@
-from jeu.flotte import Flotte
-from jeu.vagues import BONUS_PAR_VAGUE, VAGUES
-from jeu.etat_partie import EtatPartie
 from random import randint
-from jeu.projectiles import Mine, Projectile
 from time import monotonic
+
+from .entites.ennemis.flotte import Flotte
+from .entites.projectiles import Mine, Projectile
+from .etat_partie import EtatPartie
+from .vagues import BONUS_PAR_VAGUE, VAGUES
+
 
 def rectangles_se_chevauchent(zone_a, zone_b):
     x_a, y_a, largeur_a, hauteur_a = zone_a
@@ -37,6 +39,35 @@ class Partie:
         self.explosion_mine = None
         self.tours_explosion_mine = 0
         self.score_prochaine_mine = 0
+
+    def actualiser(self, joueur, largeur_terrain, hauteur_terrain):
+        """Fait avancer d'un tour une partie en cours."""
+        if self.etat != EtatPartie.EN_COURS:
+            return
+
+        self.flotte.deplacer(largeur_terrain)
+        for projectile in self.projectiles:
+            projectile.avancer()
+
+        self.gerer_collisions()
+        self.retirer_projectiles_hors_ecran()
+        self.actualiser_tirs_ennemis(hauteur_terrain)
+        self.gerer_impacts_joueur(joueur)
+        self.verifier_defaite(joueur)
+
+        if self.etat == EtatPartie.EN_COURS:
+            self.actualiser_mine()
+            self.actualiser_bonus(joueur, largeur_terrain, hauteur_terrain)
+            self.verifier_fin_vague()
+
+    def resultat(self):
+        return {
+            "score": self.score,
+            "duree_secondes": self.duree_secondes(),
+            "tirs_normaux": self.tirs_normaux,
+            "mines_lancees": self.mines_lancees,
+            "issue": self.etat.value,
+        }
 
     def gerer_collisions(self):
         for projectile in self.projectiles[:]:

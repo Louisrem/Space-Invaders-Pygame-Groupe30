@@ -1,7 +1,5 @@
-from jeu.ennemis import Ennemi
-from jeu.ennemis.comportements_tir import TirSimple
-from jeu.bouclier import Bouclier
-from jeu.ennemis.boss import Boss
+from .catalogue import creer_ennemi
+
 
 class Flotte:
     def __init__(self, grille):
@@ -17,20 +15,7 @@ class Flotte:
                 x = 230 + colonne * 75
                 y = 60 + ligne * 45
 
-                if case == "N":
-                    ennemi = Ennemi(x, y)
-                elif case == "T":
-                    ennemi = Ennemi(x, y, TirSimple())
-                elif case == "R":
-                    ennemi = Ennemi(x,y, TirSimple(), rapide=True)
-                elif case == "P":
-                    ennemi = Ennemi(x, y, TirSimple(), bouclier=Bouclier())
-                elif case == "B":
-                    ennemi = Boss(x, y)
-                else:
-                    raise ValueError(f"Case de vague inconnue : {case}")
-
-                self.ennemis.append(ennemi)
+                self.ennemis.append(creer_ennemi(case, x, y))
 
     def _deplacer_groupe(self, groupe, direction, vitesse, largeur_ecran):
         distance = direction * vitesse

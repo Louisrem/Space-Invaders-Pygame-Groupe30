@@ -2,6 +2,8 @@ from pathlib import Path
 
 import pygame
 
+from jeu.entites.ennemis.catalogue import CATALOGUE_ENNEMIS
+
 
 DOSSIER_IMAGES = Path(__file__).resolve().parent.parent / "assets" / "images"
 
@@ -22,7 +24,8 @@ def _charger_sprites(dossier, noms):
     }
 
 def charger_sprites_ennemis():
-    return _charger_sprites("ennemis", ("simple", "tireur", "rapide", "protege", "boss"))
+    noms = [nom for nom, _ in CATALOGUE_ENNEMIS.values()]
+    return _charger_sprites("ennemis", noms)
 
 def charger_sprites_projectiles():
     noms = ("tir_joueur", "tir_ennemi", "tir_boss", "mine", "mine_armee")

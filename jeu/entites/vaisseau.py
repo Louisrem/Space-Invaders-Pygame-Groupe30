@@ -1,4 +1,4 @@
-from jeu.bouclier import  Bouclier
+from .bouclier import Bouclier
 
 class Vaisseau:
     def __init__(self,x,y):

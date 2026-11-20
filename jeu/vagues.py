@@ -1,4 +1,4 @@
-from jeu.bonus import BonusBouclier, Coeur
+from .entites.bonus import BonusBouclier, Coeur
 
 VAGUES = {
     1: ("NNNNN", "NNNNN"),

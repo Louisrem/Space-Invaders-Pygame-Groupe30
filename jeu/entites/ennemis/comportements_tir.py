@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from jeu.projectiles import Projectile, ProjectileBarrage
+from ..projectiles import Projectile, ProjectileBarrage
 from random import randint
 
 class ComportementTir(ABC):

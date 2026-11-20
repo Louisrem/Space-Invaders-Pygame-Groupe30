@@ -2,6 +2,7 @@ from .comportements_tir import SansTir
 
 class Ennemi:
     def __init__(self,x,y, comportement_tir=None, rapide=False, bouclier=None, pv=1):
+        self.type_ennemi = "simple"
         self.x = x
         self.y = y
         self.hauteur = 25
