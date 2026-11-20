@@ -13,7 +13,8 @@ from jeu.interface_pygame import (
     dessiner_vague,
     dessiner_vaisseau,
     dessiner_vies,
-    dessiner_etat_mine
+    dessiner_etat_mine,
+    dessiner_menu
 )
 from jeu.flotte import Flotte
 from jeu.projectiles import Projectile
@@ -32,7 +33,7 @@ def main():
     en_cours = True
 
     projectiles = []
-    partie = Partie(flotte, projectiles)
+    partie = Partie(flotte, projectiles, etat_initial=EtatPartie.MENU)
 
     pygame.font.init()
     police = pygame.font.Font(None, 32)
@@ -41,6 +42,8 @@ def main():
         for evenement in pygame.event.get():
             if evenement.type == pygame.QUIT:
                 en_cours = False
+            elif evenement.type == pygame.KEYDOWN and evenement.key == pygame.K_RETURN:
+                partie.demarrer()
             elif (
                 evenement.type == pygame.KEYDOWN
                 and evenement.key == pygame.K_SPACE
@@ -53,6 +56,12 @@ def main():
                 print(len(projectiles))
             elif evenement.type == pygame.KEYDOWN and evenement.key == pygame.K_x:
                 partie.tirer_mine(joueur, ecran.get_height())
+
+        if partie.etat == EtatPartie.MENU:
+            dessiner_menu(ecran, police)
+            pygame.display.flip()
+            horloge.tick(60)
+            continue
 
         if partie.etat == EtatPartie.EN_COURS:
             touches = pygame.key.get_pressed()

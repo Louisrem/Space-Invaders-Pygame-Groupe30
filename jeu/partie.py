@@ -14,13 +14,13 @@ def rectangles_se_chevauchent(zone_a, zone_b):
     return chevauchement_x and chevauchement_y
 
 class Partie:
-    def __init__(self, flotte, projectiles):
+    def __init__(self, flotte, projectiles, etat_initial=EtatPartie.EN_COURS):
         self.flotte = flotte
         self.projectiles = projectiles
         self.score = 0
         self.niveau = 1
         self.projectiles_ennemis = []
-        self.etat = EtatPartie.EN_COURS
+        self.etat = etat_initial
         self.bonus = None
         self.tours_avant_bonus = None
         self.mine = None
@@ -38,6 +38,10 @@ class Partie:
 
                     self._appliquer_impact(ennemi)
                     break
+
+    def demarrer(self):
+        if self.etat == EtatPartie.MENU:
+            self.etat = EtatPartie.EN_COURS
 
     def _appliquer_impact(self, ennemi):
         if ennemi.subir_impact():
