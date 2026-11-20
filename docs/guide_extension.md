@@ -22,6 +22,7 @@ Depuis la racine du projet, lance `python main.py` dans l’environnement Python
 | Le terrain, les sprites ou le tableau de bord | [rendu.py](../interface/rendu.py) |
 | Le menu ou le bilan | [ecrans.py](../interface/ecrans.py) |
 | Le classement enregistré | [classement.py](../jeu/classement.py) |
+| Les effets sonores | [sons.py](../interface/sons.py) |
 
 [main.py](../main.py) lit le clavier et appelle `Partie.actualiser()` une fois par tour.
 `Partie` applique les règles et l’interface lit l’état obtenu pour l’afficher.
@@ -51,6 +52,14 @@ La méthode renvoie une liste de projectiles, éventuellement vide.
 Crée une instance du comportement pour chaque ennemi concerné. Si tu ajoutes
 une lettre au catalogue, indique le nom du sprite associé. Le chargeur cherche
 ce PNG dans [assets/images/ennemis](../assets/images/ennemis/).
+
+## Remplacer ou ajouter un son
+
+Les effets sont des WAV dans [assets/sons/effets](../assets/sons/effets/).
+Pour remplacer un son, garde le même nom de fichier. Pour un nouveau son,
+déclare un événement dans [evenements_partie.py](../jeu/evenements_partie.py)
+et signale-le dans la règle qui le déclenche. La valeur de l'événement
+correspond au nom du WAV sans l'extension.
 
 ## Vérifier une modification
 

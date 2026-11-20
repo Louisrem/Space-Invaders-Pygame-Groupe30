@@ -7,7 +7,8 @@ import pygame
 from jeu.entites.ennemis.catalogue import CATALOGUE_ENNEMIS
 
 
-DOSSIER_IMAGES = Path(__file__).resolve().parent.parent / "assets" / "images"
+DOSSIER_ASSETS = Path(__file__).resolve().parent.parent / "assets"
+DOSSIER_IMAGES = DOSSIER_ASSETS / "images"
 
 def charger_fond(taille):
     """Charge le fond orbital et l'adapte aux dimensions du terrain.

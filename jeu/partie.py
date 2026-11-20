@@ -5,8 +5,9 @@ from random import randint
 from time import monotonic
 
 from .entites.ennemis.flotte import Flotte
-from .entites.projectiles import Mine, Projectile
+from .entites.projectiles import Mine, Projectile, ProjectileBarrage
 from .etat_partie import EtatPartie
+from .evenements_partie import EvenementPartie
 from .vagues import BONUS_PAR_VAGUE, VAGUES
 
 
@@ -55,6 +56,7 @@ class Partie:
         self.etat = etat_initial
         self.tirs_normaux = 0
         self.mines_lancees = 0
+        self._evenements = []
 
         self.debut = None
         self.fin = None
@@ -102,6 +104,16 @@ class Partie:
             self.actualiser_bonus(joueur, largeur_terrain, hauteur_terrain)
             self.verifier_fin_vague()
 
+    def recuperer_evenements(self):
+        """Renvoie les événements depuis le dernier appel et vide la liste.
+
+        :return: Les événements de la partie dans leur ordre d'apparition.
+        :rtype: list[EvenementPartie]
+        """
+        evenements = self._evenements
+        self._evenements = []
+        return evenements
+
     def resultat(self):
         """Prépare les données utilisées pour enregistrer le résultat.
 
@@ -143,6 +155,12 @@ class Partie:
         """Mémorise l'heure de fin et applique l'état de fin demandé."""
         self.fin = monotonic()
         self.etat = etat_final
+        evenement = (
+            EvenementPartie.VICTOIRE
+            if etat_final == EtatPartie.VICTOIRE
+            else EvenementPartie.DEFAITE
+        )
+        self._evenements.append(evenement)
 
     def duree_secondes(self):
         """Calcule la durée écoulée depuis le début de la partie.
@@ -185,6 +203,7 @@ class Partie:
             x = joueur.x + joueur.largeur // 2
             self.projectiles.append(Projectile(x, joueur.y))
             self.tirs_normaux += 1
+            self._evenements.append(EvenementPartie.TIR_JOUEUR)
 
     def tirer_mine(self, joueur, hauteur_ecran):
         """Lance une mine disponible vers le milieu du terrain.
@@ -207,6 +226,7 @@ class Partie:
             x = joueur.x + joueur.largeur // 2
             self.mine = Mine(x, joueur.y, hauteur_ecran // 2)
             self.mines_lancees += 1
+            self._evenements.append(EvenementPartie.MINE_LANCEE)
             self.score_prochaine_mine = self.score + 5
 
     def actualiser_mine(self):
@@ -238,6 +258,7 @@ class Partie:
         self.mine = None
         self.explosion_mine = (mine.centre, mine.rayon_explosion)
         self.tours_explosion_mine = 12
+        self._evenements.append(EvenementPartie.EXPLOSION_MINE)
 
         for ennemi in self.flotte.ennemis[:]:
             if mine.dans_rayon(ennemi.zone_collision(), mine.rayon_explosion):
@@ -289,7 +310,10 @@ class Partie:
         :type hauteur_ecran: int
         """
         for ennemi in self.flotte.ennemis:
-            self.projectiles_ennemis.extend(ennemi.tirer())
+            tirs = ennemi.tirer()
+            self.projectiles_ennemis.extend(tirs)
+            if any(isinstance(tir, ProjectileBarrage) for tir in tirs):
+                self._evenements.append(EvenementPartie.BARRAGE_BOSS)
 
         for projectile in self.projectiles_ennemis[:]:
             projectile.avancer()
@@ -307,6 +331,7 @@ class Partie:
             if rectangles_se_chevauchent(projectile.zone_collision(), joueur.zone_collision()):
                 self.projectiles_ennemis.remove(projectile)
                 joueur.subir_impact()
+                self._evenements.append(EvenementPartie.IMPACT_JOUEUR)
 
     def actualiser_bonus(self, joueur, largeur_ecran, hauteur_ecran):
         """Gère l'apparition, la chute et le ramassage du bonus.
@@ -342,6 +367,7 @@ class Partie:
             self.bonus.zone_collision(), joueur.zone_collision()
         ):
             self.bonus.appliquer(joueur)
+            self._evenements.append(EvenementPartie.BONUS_RAMASSE)
             self.bonus = None
         elif self.bonus.est_sorti_par_le_bas(hauteur_ecran):
             self.bonus = None

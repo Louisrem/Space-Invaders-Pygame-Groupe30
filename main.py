@@ -11,6 +11,7 @@ from interface.ressources import (
     charger_sprites_ennemis,
     charger_sprites_projectiles,
 )
+from interface.sons import SonsJeu
 from jeu.classement import enregistrer_resultat, meilleurs_resultats
 from jeu.entites.ennemis.flotte import Flotte
 from jeu.entites.vaisseau import Vaisseau
@@ -37,6 +38,7 @@ def main():
     pygame.display.init()
     ecran = pygame.display.set_mode((800,600))
     fond = charger_fond(ecran.get_size())
+    sons = SonsJeu()
     pygame.display.set_caption("Space Invaders - Groupe 30")
     horloge = pygame.time.Clock()
     en_cours = True
@@ -93,6 +95,7 @@ def main():
                 joueur.deplacer(5, ecran.get_width())
 
             partie.actualiser(joueur, ecran.get_width(), ecran.get_height())
+            sons.jouer_evenements(partie.recuperer_evenements())
 
             if partie.etat in (EtatPartie.VICTOIRE, EtatPartie.DEFAITE):
                 enregistrer_resultat(partie.resultat())
