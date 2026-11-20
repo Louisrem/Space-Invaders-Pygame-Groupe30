@@ -36,7 +36,19 @@ def dessiner_avertissement_boss(ecran, flotte):
 
 def dessiner_projectile(ecran, projectile):
     rectangle = pygame.Rect(projectile.zone_collision())
-    pygame.draw.rect(ecran, (255,255,255), rectangle)
+    if projectile.direction < 0:
+        couleur = (78, 242, 219)
+        lumiere = (228, 255, 251)
+        pointe_y = rectangle.top
+    else:
+        couleur = (255, 99, 85)
+        lumiere = (255, 212, 167)
+        pointe_y = rectangle.bottom - 3
+
+    pygame.draw.rect(ecran, couleur, rectangle, border_radius=2)
+    pygame.draw.rect(ecran, lumiere, (rectangle.left + 1, pointe_y, rectangle.width - 2, 3))
+    pygame.draw.line(ecran, lumiere, (rectangle.centerx, rectangle.top + 2),
+                     (rectangle.centerx, rectangle.bottom - 3))
 
 def dessiner_score(ecran, police, score):
     texte = police.render(f"Score : {score}", True, (255,255,255))
@@ -81,9 +93,15 @@ def dessiner_bonus(ecran, bonus):
 
 def dessiner_mine(ecran, mine):
     couleur = (255, 205, 85) if mine.armee else (206, 160, 65)
+    x, y = mine.centre
     if mine.armee:
         pygame.draw.circle(ecran, couleur, mine.centre, mine.rayon_detection, 1)
-    pygame.draw.circle(ecran, couleur, mine.centre, mine.largeur // 2)
+
+    rayon = mine.largeur // 2
+    contour = [(x, y - rayon), (x + rayon - 1, y), (x, y + rayon - 1), (x - rayon, y)]
+    pygame.draw.polygon(ecran, couleur, contour)
+    pygame.draw.rect(ecran, (67, 42, 46), (x - 3, y - 3, 6, 6))
+    pygame.draw.rect(ecran, (255, 243, 191), (x - 1, y - 1, 2, 2))
 
 
 def dessiner_explosion_mine(ecran, explosion):
