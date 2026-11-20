@@ -1,4 +1,5 @@
 import pygame
+from jeu.ennemis.boss import Boss
 
 def dessiner_vaisseau(ecran, vaisseau):
     rectangle = pygame.Rect(
@@ -11,7 +12,8 @@ def dessiner_flotte(ecran, flotte):
         rectangle = pygame.Rect(
             ennemi.x, ennemi.y, ennemi.largeur, ennemi.hauteur
         )
-        pygame.draw.rect(ecran,(240,100,100), rectangle)
+        couleur = (180, 105, 255) if isinstance(ennemi, Boss) else (240, 100, 100)
+        pygame.draw.rect(ecran, couleur, rectangle)
         if ennemi.bouclier is not None and ennemi.bouclier.actif:
             pygame.draw.rect(ecran, (80,190,255), rectangle, 2)
 
