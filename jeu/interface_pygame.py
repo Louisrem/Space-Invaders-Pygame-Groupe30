@@ -112,7 +112,6 @@ def dessiner_etat_mine(ecran, police, mine_active, ennemis_restants):
     ecran.blit(image, position)
 
 def dessiner_menu(ecran, police):
-    ecran.fill((0, 0, 0))
     centre_x, centre_y = ecran.get_rect().center
 
     titre = police.render("SPACE INVADERS", True, (255, 255, 255))
@@ -123,7 +122,6 @@ def dessiner_menu(ecran, police):
 
 
 def dessiner_classement(ecran, police, resultats):
-    ecran.fill((0, 0, 0))
     dessiner_message_centre(ecran, police, "MEILLEURS SCORES", decalage_y=-210)
     dessiner_message_centre(ecran, police, "Échap pour revenir au menu", decalage_y=140)
 

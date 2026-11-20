@@ -5,6 +5,11 @@ import pygame
 
 DOSSIER_IMAGES = Path(__file__).resolve().parent.parent / "assets" / "images"
 
+def charger_fond(taille):
+    image = pygame.image.load(DOSSIER_IMAGES / "fonds" / "orbite.png").convert()
+    return pygame.transform.smoothscale(image, taille)
+
+
 def charger_sprite_vaisseau(taille):
     sprite = pygame.image.load(DOSSIER_IMAGES / "vaisseau.png").convert_alpha()
     return pygame.transform.scale(sprite, taille)

@@ -21,6 +21,7 @@ from jeu.interface_pygame import (
 )
 from jeu.flotte import Flotte
 from jeu.ressources import (
+    charger_fond,
     charger_sprite_vaisseau,
     charger_sprites_ennemis,
     charger_sprites_projectiles,
@@ -40,6 +41,7 @@ def creer_partie(etat_initial):
 def main():
     pygame.display.init()
     ecran = pygame.display.set_mode((800,600))
+    fond = charger_fond(ecran.get_size())
     pygame.display.set_caption("Space Invaders - Groupe 30")
     horloge = pygame.time.Clock()
     en_cours = True
@@ -76,6 +78,7 @@ def main():
             elif evenement.type == pygame.KEYDOWN and evenement.key == pygame.K_x:
                 partie.tirer_mine(joueur, ecran.get_height())
 
+        ecran.blit(fond, (0, 0))
         if partie.etat == EtatPartie.MENU:
             if classement_affiche is None:
                 dessiner_menu(ecran, police)
@@ -119,7 +122,6 @@ def main():
                     "issue": partie.etat.value,
                 })
 
-        ecran.fill((0,0,0))
         dessiner_avertissement_boss(ecran, partie.flotte)
         dessiner_vaisseau(ecran, joueur, sprite_vaisseau)
         dessiner_flotte(ecran, partie.flotte, sprites_ennemis)
