@@ -104,6 +104,37 @@ def dessiner_menu(ecran, police):
     ecran.blit(titre, titre.get_rect(center=(centre_x, centre_y - 40)))
 
     dessiner_message_centre(ecran, police, "Entrée pour jouer")
+    dessiner_message_centre(ecran, police, "C pour voir le classement", decalage_y=40)
+
+
+def dessiner_classement(ecran, police, resultats):
+    ecran.fill((0, 0, 0))
+    dessiner_message_centre(ecran, police, "MEILLEURS SCORES", decalage_y=-210)
+    dessiner_message_centre(ecran, police, "Échap pour revenir au menu", decalage_y=140)
+
+    if not resultats:
+        dessiner_message_centre(ecran, police, "Aucune partie terminée")
+        return
+
+    colonnes = (70, 180, 300, 420, 540, 690)
+    lignes = [("Rang", "Score", "Temps", "Tirs", "Mines", "Résultat")]
+    for rang, resultat in enumerate(resultats, start=1):
+        minutes, secondes = divmod(resultat["duree_secondes"], 60)
+        lignes.append((
+            str(rang),
+            str(resultat["score"]),
+            f"{minutes:02d}:{secondes:02d}",
+            str(resultat["tirs_normaux"]),
+            str(resultat["mines_lancees"]),
+            "Victoire" if resultat["issue"] == "victoire" else "Défaite",
+        ))
+
+    for indice, ligne in enumerate(lignes):
+        couleur = (255, 205, 85) if indice == 0 else (255, 255, 255)
+        for x, valeur in zip(colonnes, ligne):
+            texte = police.render(valeur, True, couleur)
+            ecran.blit(texte, texte.get_rect(center=(x, 140 + indice * 44)))
+
 
 def dessiner_chrono(ecran, police, duree_secondes):
     minutes, secondes = divmod(duree_secondes, 60)

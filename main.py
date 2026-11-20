@@ -17,11 +17,13 @@ from jeu.interface_pygame import (
     dessiner_menu,
     dessiner_chrono,
     dessiner_compteurs_tirs,
+    dessiner_classement,
 )
 from jeu.flotte import Flotte
 from jeu.partie import Partie
 from jeu.vagues import VAGUES
 from jeu.etat_partie import EtatPartie
+from jeu.classement import enregistrer_resultat, meilleurs_resultats
 
 
 def creer_partie(etat_initial):
@@ -38,6 +40,7 @@ def main():
     en_cours = True
 
     joueur, partie = creer_partie(EtatPartie.MENU)
+    classement_affiche = None
 
     pygame.font.init()
     police = pygame.font.Font(None, 32)
@@ -46,6 +49,15 @@ def main():
         for evenement in pygame.event.get():
             if evenement.type == pygame.QUIT:
                 en_cours = False
+            elif classement_affiche is not None:
+                if evenement.type == pygame.KEYDOWN and evenement.key == pygame.K_ESCAPE:
+                    classement_affiche = None
+            elif (
+                partie.etat == EtatPartie.MENU
+                and evenement.type == pygame.KEYDOWN
+                and evenement.key == pygame.K_c
+            ):
+                classement_affiche = meilleurs_resultats()
             elif evenement.type == pygame.KEYDOWN and evenement.key == pygame.K_RETURN:
                 if partie.etat == EtatPartie.MENU:
                     partie.demarrer()
@@ -57,7 +69,10 @@ def main():
                 partie.tirer_mine(joueur, ecran.get_height())
 
         if partie.etat == EtatPartie.MENU:
-            dessiner_menu(ecran, police)
+            if classement_affiche is None:
+                dessiner_menu(ecran, police)
+            else:
+                dessiner_classement(ecran, police, classement_affiche)
             pygame.display.flip()
             horloge.tick(60)
             continue
@@ -86,6 +101,15 @@ def main():
                 partie.actualiser_mine()
                 partie.actualiser_bonus(joueur, ecran.get_width(), ecran.get_height())
                 partie.verifier_fin_vague()
+
+            if partie.etat in (EtatPartie.VICTOIRE, EtatPartie.DEFAITE):
+                enregistrer_resultat({
+                    "score": partie.score,
+                    "duree_secondes": partie.duree_secondes(),
+                    "tirs_normaux": partie.tirs_normaux,
+                    "mines_lancees": partie.mines_lancees,
+                    "issue": partie.etat.value,
+                })
 
         ecran.fill((0,0,0))
         dessiner_avertissement_boss(ecran, partie.flotte)
