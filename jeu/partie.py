@@ -26,6 +26,7 @@ class Partie:
         self.mine = None
         self.explosion_mine = None
         self.tours_explosion_mine = 0
+        self.score_prochaine_mine = 0
 
     def gerer_collisions(self):
         for projectile in self.projectiles[:]:
@@ -43,10 +44,18 @@ class Partie:
             self.flotte.ennemis.remove(ennemi)
             self.score += 1
 
+    def ennemis_avant_mine(self):
+        return max(0, self.score_prochaine_mine - self.score)
+
     def tirer_mine(self, joueur, hauteur_ecran):
-        if self.etat == EtatPartie.EN_COURS and self.mine is None:
+        if (
+            self.etat == EtatPartie.EN_COURS
+            and self.mine is None
+            and self.ennemis_avant_mine() == 0
+        ):
             x = joueur.x + joueur.largeur // 2
             self.mine = Mine(x, joueur.y, hauteur_ecran // 2)
+            self.score_prochaine_mine = self.score + 5
 
     def actualiser_mine(self):
         if self.tours_explosion_mine > 0:

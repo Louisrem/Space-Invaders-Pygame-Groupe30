@@ -13,6 +13,7 @@ from jeu.interface_pygame import (
     dessiner_vague,
     dessiner_vaisseau,
     dessiner_vies,
+    dessiner_etat_mine
 )
 from jeu.flotte import Flotte
 from jeu.projectiles import Projectile
@@ -99,6 +100,10 @@ def main():
         dessiner_score(ecran, police, partie.score)
         dessiner_vies(ecran, police, joueur.vies)
         dessiner_vague(ecran, police, partie.niveau, len(partie.flotte.ennemis))
+
+        dessiner_etat_mine(
+            ecran, police, partie.mine is not None, partie.ennemis_avant_mine()
+        )
 
         if partie.etat == EtatPartie.DEFAITE:
             dessiner_message_centre(ecran, police, "PARTIE TERMINÉE")

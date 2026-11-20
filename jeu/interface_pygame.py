@@ -82,3 +82,15 @@ def dessiner_mine(ecran, mine):
 def dessiner_explosion_mine(ecran, explosion):
     centre, rayon = explosion
     pygame.draw.circle(ecran, (255, 145, 70), centre, rayon, 3)
+
+def dessiner_etat_mine(ecran, police, mine_active, ennemis_restants):
+    if mine_active:
+        texte = "MINE POSÉE"
+    elif ennemis_restants == 0:
+        texte = "MINE PRÊTE [X]"
+    else:
+        texte = f"MINE : ENCORE {ennemis_restants} À ÉLIMINER"
+
+    image = police.render(texte, True, (255, 205, 85))
+    position = image.get_rect(midtop=(ecran.get_width() // 2, 37))
+    ecran.blit(image, position)
