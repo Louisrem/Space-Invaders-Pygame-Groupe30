@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from jeu.projectiles import Projectile
+from jeu.projectiles import Projectile, ProjectileBarrage
 from random import randint
 
 class ComportementTir(ABC):
@@ -50,9 +50,7 @@ class TirDeBarrage(ComportementTir):
             self.tours_restants = 60
             return []
 
-        projectiles = [
-            Projectile(x, 0, direction=1) for x in self.colonnes_annoncees
-        ]
+        projectiles = [ProjectileBarrage(x) for x in self.colonnes_annoncees]
         self.colonnes_annoncees = []
         self.tours_restants = 120
         return projectiles

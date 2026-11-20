@@ -22,6 +22,11 @@ class Projectile:
         haut = self.y - self.hauteur
         return haut >= hauteur_ecran
 
+class ProjectileBarrage(Projectile):
+    def __init__(self, x):
+        super().__init__(x, 0, direction=1)
+
+
 class Mine(Projectile):
     rayon_detection = 22
     rayon_explosion = 65

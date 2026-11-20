@@ -2,6 +2,7 @@ import pygame
 from jeu.ennemis.boss import Boss
 from jeu.ennemis.comportements_tir import SansTir
 from jeu.bonus import BonusBouclier, Coeur
+from jeu.projectiles import ProjectileBarrage
 
 def dessiner_vaisseau(ecran, vaisseau, sprite):
     rectangle = pygame.Rect(vaisseau.zone_collision())
@@ -36,7 +37,10 @@ def dessiner_avertissement_boss(ecran, flotte):
                 pygame.draw.line(ecran, (255, 145, 70), (x, 0), (x, bas), 2)
 
 def dessiner_projectile(ecran, projectile, sprites):
-    nom = "tir_joueur" if projectile.direction < 0 else "tir_ennemi"
+    if isinstance(projectile, ProjectileBarrage):
+        nom = "tir_boss"
+    else:
+        nom = "tir_joueur" if projectile.direction < 0 else "tir_ennemi"
     x, y, _, _ = projectile.zone_collision()
     ecran.blit(sprites[nom], (x, y))
 
