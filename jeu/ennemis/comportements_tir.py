@@ -32,3 +32,27 @@ class TirSimple(ComportementTir):
 
     def _nouveau_delai(self):
         return randint(self.delai // 2, self.delai * 3 // 2)
+
+class TirDeBarrage(ComportementTir):
+    def __init__(self):
+        self.tours_restants = 120
+        self.colonnes_annoncees = []
+
+    def tirer(self, ennemi):
+        self.tours_restants -= 1
+        if self.tours_restants > 0:
+            return []
+
+        if not self.colonnes_annoncees:
+            centre = ennemi.x + ennemi.largeur // 2
+            ecart = ennemi.largeur // 3
+            self.colonnes_annoncees = [centre - ecart, centre, centre + ecart]
+            self.tours_restants = 60
+            return []
+
+        projectiles = [
+            Projectile(x, 0, direction=1) for x in self.colonnes_annoncees
+        ]
+        self.colonnes_annoncees = []
+        self.tours_restants = 120
+        return projectiles

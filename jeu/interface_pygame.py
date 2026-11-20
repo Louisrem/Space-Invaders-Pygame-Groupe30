@@ -17,6 +17,14 @@ def dessiner_flotte(ecran, flotte):
         if ennemi.bouclier is not None and ennemi.bouclier.actif:
             pygame.draw.rect(ecran, (80,190,255), rectangle, 2)
 
+def dessiner_avertissement_boss(ecran, flotte):
+    bas = ecran.get_height() - 1
+
+    for ennemi in flotte.ennemis:
+        if isinstance(ennemi, Boss):
+            for x in ennemi.colonnes_barrage():
+                pygame.draw.line(ecran, (255, 145, 70), (x, 0), (x, bas), 2)
+
 def dessiner_projectile(ecran, projectile):
     rectangle = pygame.Rect(projectile.zone_collision())
     pygame.draw.rect(ecran, (255,255,255), rectangle)

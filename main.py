@@ -1,7 +1,7 @@
 import pygame
 
 from jeu.vaisseau import Vaisseau
-from jeu.interface_pygame import dessiner_vaisseau, dessiner_flotte, dessiner_projectile, dessiner_score, dessiner_vague, dessiner_vies, dessiner_defaite
+from jeu.interface_pygame import dessiner_vaisseau, dessiner_flotte, dessiner_projectile, dessiner_score, dessiner_vague, dessiner_vies, dessiner_defaite, dessiner_avertissement_boss
 from jeu.flotte import Flotte
 from jeu.projectiles import Projectile
 from jeu.partie import Partie
@@ -62,6 +62,7 @@ def main():
                 partie.verifier_fin_vague()
 
         ecran.fill((0,0,0))
+        dessiner_avertissement_boss(ecran, partie.flotte)
         dessiner_vaisseau(ecran,joueur)
         dessiner_flotte(ecran,partie.flotte)
         for projectile in projectiles:
