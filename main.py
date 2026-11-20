@@ -1,7 +1,7 @@
 import pygame
 
 from jeu.vaisseau import Vaisseau
-from jeu.interface_pygame import dessiner_vaisseau, dessiner_flotte, dessiner_projectile, dessiner_score, dessiner_vague, dessiner_vies, dessiner_defaite, dessiner_avertissement_boss
+from jeu.interface_pygame import dessiner_vaisseau, dessiner_flotte, dessiner_projectile, dessiner_score, dessiner_vague, dessiner_vies, dessiner_message_centre, dessiner_avertissement_boss
 from jeu.flotte import Flotte
 from jeu.projectiles import Projectile
 from jeu.partie import Partie
@@ -76,7 +76,9 @@ def main():
         dessiner_vague(ecran, police, partie.niveau, len(partie.flotte.ennemis))
 
         if partie.etat == EtatPartie.DEFAITE:
-            dessiner_defaite(ecran, police)
+            dessiner_message_centre(ecran, police, "PARTIE TERMINÉE")
+        elif partie.etat == EtatPartie.VICTOIRE:
+            dessiner_message_centre(ecran, police, "VICTOIRE !")
 
         pygame.display.flip()
 

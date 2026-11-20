@@ -47,6 +47,8 @@ class Partie:
         if vague_suivante in VAGUES:
             self.flotte = Flotte(VAGUES[vague_suivante])
             self.niveau = vague_suivante
+        else:
+            self.etat = EtatPartie.VICTOIRE
 
     def verifier_defaite(self, joueur):
         if joueur.vies == 0:
