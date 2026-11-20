@@ -1,14 +1,7 @@
-from pathlib import Path
-
 import pygame
 from jeu.ennemis.boss import Boss
+from jeu.ennemis.comportements_tir import SansTir
 from jeu.bonus import BonusBouclier, Coeur
-
-def charger_sprite_vaisseau(taille):
-    chemin = Path(__file__).resolve().parent.parent / "assets" / "images" / "vaisseau.png"
-    sprite = pygame.image.load(chemin).convert_alpha()
-    return pygame.transform.scale(sprite, taille)
-
 
 def dessiner_vaisseau(ecran, vaisseau, sprite):
     rectangle = pygame.Rect(vaisseau.zone_collision())
@@ -16,13 +9,21 @@ def dessiner_vaisseau(ecran, vaisseau, sprite):
     if vaisseau.bouclier is not None and vaisseau.bouclier.actif:
         pygame.draw.rect(ecran, (80, 190, 255), rectangle, 2)
 
-def dessiner_flotte(ecran, flotte):
+def dessiner_flotte(ecran, flotte, sprites):
     for ennemi in flotte.ennemis:
-        rectangle = pygame.Rect(
-            ennemi.x, ennemi.y, ennemi.largeur, ennemi.hauteur
-        )
-        couleur = (180, 105, 255) if isinstance(ennemi, Boss) else (240, 100, 100)
-        pygame.draw.rect(ecran, couleur, rectangle)
+        if isinstance(ennemi, Boss):
+            nom = "boss"
+        elif ennemi.bouclier is not None:
+            nom = "protege"
+        elif ennemi.rapide:
+            nom = "rapide"
+        elif isinstance(ennemi.comportement_tir, SansTir):
+            nom = "simple"
+        else:
+            nom = "tireur"
+
+        rectangle = pygame.Rect(ennemi.zone_collision())
+        ecran.blit(sprites[nom], rectangle.topleft)
         if ennemi.bouclier is not None and ennemi.bouclier.actif:
             pygame.draw.rect(ecran, (80,190,255), rectangle, 2)
 
@@ -34,21 +35,11 @@ def dessiner_avertissement_boss(ecran, flotte):
             for x in ennemi.colonnes_barrage():
                 pygame.draw.line(ecran, (255, 145, 70), (x, 0), (x, bas), 2)
 
-def dessiner_projectile(ecran, projectile):
-    rectangle = pygame.Rect(projectile.zone_collision())
-    if projectile.direction < 0:
-        couleur = (78, 242, 219)
-        lumiere = (228, 255, 251)
-        pointe_y = rectangle.top
-    else:
-        couleur = (255, 99, 85)
-        lumiere = (255, 212, 167)
-        pointe_y = rectangle.bottom - 3
+def dessiner_projectile(ecran, projectile, sprites):
+    nom = "tir_joueur" if projectile.direction < 0 else "tir_ennemi"
+    x, y, _, _ = projectile.zone_collision()
+    ecran.blit(sprites[nom], (x, y))
 
-    pygame.draw.rect(ecran, couleur, rectangle, border_radius=2)
-    pygame.draw.rect(ecran, lumiere, (rectangle.left + 1, pointe_y, rectangle.width - 2, 3))
-    pygame.draw.line(ecran, lumiere, (rectangle.centerx, rectangle.top + 2),
-                     (rectangle.centerx, rectangle.bottom - 3))
 
 def dessiner_score(ecran, police, score):
     texte = police.render(f"Score : {score}", True, (255,255,255))
@@ -91,17 +82,13 @@ def dessiner_bonus(ecran, bonus):
         pygame.draw.rect(ecran, (80, 190, 255), rectangle, 3)
 
 
-def dessiner_mine(ecran, mine):
-    couleur = (255, 205, 85) if mine.armee else (206, 160, 65)
-    x, y = mine.centre
+def dessiner_mine(ecran, mine, sprites):
+    nom = "mine_armee" if mine.armee else "mine"
     if mine.armee:
-        pygame.draw.circle(ecran, couleur, mine.centre, mine.rayon_detection, 1)
+        pygame.draw.circle(ecran, (255, 205, 85), mine.centre, mine.rayon_detection, 1)
 
-    rayon = mine.largeur // 2
-    contour = [(x, y - rayon), (x + rayon - 1, y), (x, y + rayon - 1), (x - rayon, y)]
-    pygame.draw.polygon(ecran, couleur, contour)
-    pygame.draw.rect(ecran, (67, 42, 46), (x - 3, y - 3, 6, 6))
-    pygame.draw.rect(ecran, (255, 243, 191), (x - 1, y - 1, 2, 2))
+    x, y, _, _ = mine.zone_collision()
+    ecran.blit(sprites[nom], (x, y))
 
 
 def dessiner_explosion_mine(ecran, explosion):

@@ -2,7 +2,6 @@ import pygame
 
 from jeu.vaisseau import Vaisseau
 from jeu.interface_pygame import (
-    charger_sprite_vaisseau,
     dessiner_avertissement_boss,
     dessiner_bonus,
     dessiner_explosion_mine,
@@ -21,6 +20,11 @@ from jeu.interface_pygame import (
     dessiner_classement,
 )
 from jeu.flotte import Flotte
+from jeu.ressources import (
+    charger_sprite_vaisseau,
+    charger_sprites_ennemis,
+    charger_sprites_projectiles,
+)
 from jeu.partie import Partie
 from jeu.vagues import VAGUES
 from jeu.etat_partie import EtatPartie
@@ -42,6 +46,8 @@ def main():
 
     joueur, partie = creer_partie(EtatPartie.MENU)
     sprite_vaisseau = charger_sprite_vaisseau((joueur.largeur, joueur.hauteur))
+    sprites_ennemis = charger_sprites_ennemis()
+    sprites_projectiles = charger_sprites_projectiles()
     classement_affiche = None
 
     pygame.font.init()
@@ -116,20 +122,20 @@ def main():
         ecran.fill((0,0,0))
         dessiner_avertissement_boss(ecran, partie.flotte)
         dessiner_vaisseau(ecran, joueur, sprite_vaisseau)
-        dessiner_flotte(ecran,partie.flotte)
+        dessiner_flotte(ecran, partie.flotte, sprites_ennemis)
 
         if partie.bonus is not None:
             dessiner_bonus(ecran, partie.bonus)
         if partie.mine is not None:
-            dessiner_mine(ecran, partie.mine)
+            dessiner_mine(ecran, partie.mine, sprites_projectiles)
         if partie.explosion_mine is not None:
             dessiner_explosion_mine(ecran, partie.explosion_mine)
 
         for projectile in partie.projectiles:
-            dessiner_projectile(ecran, projectile)
+            dessiner_projectile(ecran, projectile, sprites_projectiles)
 
         for projectile in partie.projectiles_ennemis:
-            dessiner_projectile(ecran,projectile)
+            dessiner_projectile(ecran, projectile, sprites_projectiles)
 
         dessiner_score(ecran, police, partie.score)
         dessiner_vies(ecran, police, joueur.vies)
