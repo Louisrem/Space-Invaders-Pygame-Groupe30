@@ -1,6 +1,8 @@
 from jeu.flotte import Flotte
-from jeu.vagues import VAGUES
+from jeu.vagues import VAGUES, VAGUES_AVEC_COEUR
 from jeu.etat_partie import EtatPartie
+from random import randint
+from jeu.bonus import Coeur
 
 def rectangles_se_chevauchent(zone_a, zone_b):
     x_a, y_a, largeur_a, hauteur_a = zone_a
@@ -19,6 +21,8 @@ class Partie:
         self.niveau = 1
         self.projectiles_ennemis = []
         self.etat = EtatPartie.EN_COURS
+        self.coeur = None
+        self.tours_avant_coeur = None
 
     def gerer_collisions(self):
         for projectile in self.projectiles[:]:
@@ -47,6 +51,8 @@ class Partie:
         if vague_suivante in VAGUES:
             self.flotte = Flotte(VAGUES[vague_suivante])
             self.niveau = vague_suivante
+            if self.niveau in VAGUES_AVEC_COEUR:
+                self.tours_avant_coeur = randint(120, 300)
         else:
             self.etat = EtatPartie.VICTOIRE
 
@@ -76,3 +82,28 @@ class Partie:
             if rectangles_se_chevauchent(projectile.zone_collision(), joueur.zone_collision()):
                 self.projectiles_ennemis.remove(projectile)
                 joueur.perdre_vie()
+
+    def actualiser_coeur(self, joueur, largeur_ecran, hauteur_ecran):
+        if self.tours_avant_coeur is not None:
+            self.tours_avant_coeur -= 1
+
+            if self.tours_avant_coeur == 0:
+                milieu = joueur.x + (joueur.largeur - Coeur.largeur) // 2
+                gauche = max(0, milieu - 160)
+                droite = min(largeur_ecran - Coeur.largeur, milieu + 160)
+
+                self.coeur = Coeur(randint(gauche, droite), 0)
+                self.tours_avant_coeur = None
+
+        if self.coeur is None:
+            return
+
+        self.coeur.avancer()
+
+        if rectangles_se_chevauchent(
+            self.coeur.zone_collision(), joueur.zone_collision()
+        ):
+            joueur.gagner_vie()
+            self.coeur = None
+        elif self.coeur.est_sorti_par_le_bas(hauteur_ecran):
+            self.coeur = None

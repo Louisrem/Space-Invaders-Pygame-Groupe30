@@ -5,3 +5,5 @@ VAGUES = {
     4: ("NNNNN", "NNNNN", "P.T.P", ".R.R."),
     5: ("..B..", "NNNNN", "P.T.P", ".R.R."),
 }
+
+VAGUES_AVEC_COEUR = {2, 4}

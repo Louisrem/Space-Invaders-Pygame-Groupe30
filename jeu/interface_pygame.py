@@ -51,3 +51,12 @@ def dessiner_message_centre(ecran, police, texte):
     message = police.render(texte, True, (255, 255, 255))
     position = message.get_rect(center=ecran.get_rect().center)
     ecran.blit(message, position)
+
+def dessiner_coeur(ecran, coeur):
+    x, y = coeur.x, coeur.y
+    rose = (255, 90, 130)
+    pygame.draw.circle(ecran, rose, (x + 6, y + 6), 6)
+    pygame.draw.circle(ecran, rose, (x + 18, y + 6), 6)
+    pygame.draw.polygon(
+        ecran, rose, [(x, y + 7), (x + 23, y + 7), (x + 12, y + 23)]
+    )

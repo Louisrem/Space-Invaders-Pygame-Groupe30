@@ -23,3 +23,6 @@ class Vaisseau:
     def perdre_vie(self):
         if self.vies > 0:
             self.vies -= 1
+
+    def gagner_vie(self):
+        self.vies += 1
