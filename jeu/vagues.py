@@ -1,3 +1,5 @@
+from jeu.bonus import BonusBouclier, Coeur
+
 VAGUES = {
     1: ("NNNNN", "NNNNN"),
     2: ("NNNNN", "NNNNN", "TTTTT"),
@@ -6,4 +8,8 @@ VAGUES = {
     5: ("..B..", "NNNNN", "P.T.P", ".R.R."),
 }
 
-VAGUES_AVEC_COEUR = {2, 4}
+BONUS_PAR_VAGUE = {
+    2: Coeur,
+    3: BonusBouclier,
+    4: Coeur,
+}

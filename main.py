@@ -1,7 +1,7 @@
 import pygame
 
 from jeu.vaisseau import Vaisseau
-from jeu.interface_pygame import dessiner_vaisseau, dessiner_flotte, dessiner_projectile, dessiner_score, dessiner_vague, dessiner_vies, dessiner_message_centre, dessiner_avertissement_boss, dessiner_coeur
+from jeu.interface_pygame import dessiner_vaisseau, dessiner_flotte, dessiner_projectile, dessiner_score, dessiner_vague, dessiner_vies, dessiner_message_centre, dessiner_avertissement_boss, dessiner_bonus
 from jeu.flotte import Flotte
 from jeu.projectiles import Projectile
 from jeu.partie import Partie
@@ -59,7 +59,7 @@ def main():
             partie.verifier_defaite(joueur)
 
             if partie.etat == EtatPartie.EN_COURS:
-                partie.actualiser_coeur(joueur, ecran.get_width(), ecran.get_height())
+                partie.actualiser_bonus(joueur, ecran.get_width(), ecran.get_height())
                 partie.verifier_fin_vague()
 
         ecran.fill((0,0,0))
@@ -67,8 +67,8 @@ def main():
         dessiner_vaisseau(ecran,joueur)
         dessiner_flotte(ecran,partie.flotte)
 
-        if partie.coeur is not None:
-            dessiner_coeur(ecran, partie.coeur)
+        if partie.bonus is not None:
+            dessiner_bonus(ecran, partie.bonus)
 
         for projectile in projectiles:
             dessiner_projectile(ecran, projectile)

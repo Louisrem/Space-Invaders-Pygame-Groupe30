@@ -1,5 +1,5 @@
 from jeu.flotte import Flotte
-from jeu.vagues import VAGUES, VAGUES_AVEC_COEUR
+from jeu.vagues import BONUS_PAR_VAGUE, VAGUES
 from jeu.etat_partie import EtatPartie
 from random import randint
 from jeu.bonus import Coeur
@@ -21,8 +21,8 @@ class Partie:
         self.niveau = 1
         self.projectiles_ennemis = []
         self.etat = EtatPartie.EN_COURS
-        self.coeur = None
-        self.tours_avant_coeur = None
+        self.bonus = None
+        self.tours_avant_bonus = None
 
     def gerer_collisions(self):
         for projectile in self.projectiles[:]:
@@ -51,8 +51,9 @@ class Partie:
         if vague_suivante in VAGUES:
             self.flotte = Flotte(VAGUES[vague_suivante])
             self.niveau = vague_suivante
-            if self.niveau in VAGUES_AVEC_COEUR:
-                self.tours_avant_coeur = randint(120, 300)
+            self.tours_avant_bonus = None
+            if self.niveau in BONUS_PAR_VAGUE:
+                self.tours_avant_bonus = randint(120, 300)
         else:
             self.etat = EtatPartie.VICTOIRE
 
@@ -81,29 +82,30 @@ class Partie:
         for projectile in self.projectiles_ennemis[:]:
             if rectangles_se_chevauchent(projectile.zone_collision(), joueur.zone_collision()):
                 self.projectiles_ennemis.remove(projectile)
-                joueur.perdre_vie()
+                joueur.subir_impact()
 
-    def actualiser_coeur(self, joueur, largeur_ecran, hauteur_ecran):
-        if self.tours_avant_coeur is not None:
-            self.tours_avant_coeur -= 1
+    def actualiser_bonus(self, joueur, largeur_ecran, hauteur_ecran):
+        if self.tours_avant_bonus is not None:
+            self.tours_avant_bonus -= 1
 
-            if self.tours_avant_coeur == 0:
-                milieu = joueur.x + (joueur.largeur - Coeur.largeur) // 2
+            if self.tours_avant_bonus == 0:
+                type_bonus = BONUS_PAR_VAGUE[self.niveau]
+                milieu = joueur.x + (joueur.largeur - type_bonus.largeur) // 2
                 gauche = max(0, milieu - 160)
-                droite = min(largeur_ecran - Coeur.largeur, milieu + 160)
+                droite = min(largeur_ecran - type_bonus.largeur, milieu + 160)
 
-                self.coeur = Coeur(randint(gauche, droite), 0)
-                self.tours_avant_coeur = None
+                self.bonus = type_bonus(randint(gauche, droite), 0)
+                self.tours_avant_bonus = None
 
-        if self.coeur is None:
+        if self.bonus is None:
             return
 
-        self.coeur.avancer()
+        self.bonus.avancer()
 
         if rectangles_se_chevauchent(
-            self.coeur.zone_collision(), joueur.zone_collision()
+            self.bonus.zone_collision(), joueur.zone_collision()
         ):
-            joueur.gagner_vie()
-            self.coeur = None
-        elif self.coeur.est_sorti_par_le_bas(hauteur_ecran):
-            self.coeur = None
+            self.bonus.appliquer(joueur)
+            self.bonus = None
+        elif self.bonus.est_sorti_par_le_bas(hauteur_ecran):
+            self.bonus = None

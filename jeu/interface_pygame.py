@@ -1,11 +1,14 @@
 import pygame
 from jeu.ennemis.boss import Boss
+from jeu.bonus import BonusBouclier, Coeur
 
 def dessiner_vaisseau(ecran, vaisseau):
     rectangle = pygame.Rect(
         vaisseau.x, vaisseau.y, vaisseau.largeur, vaisseau.hauteur
     )
     pygame.draw.rect(ecran,(80,220,160), rectangle)
+    if vaisseau.bouclier is not None and vaisseau.bouclier.actif:
+        pygame.draw.rect(ecran, (80, 190, 255), rectangle, 2)
 
 def dessiner_flotte(ecran, flotte):
     for ennemi in flotte.ennemis:
@@ -60,3 +63,10 @@ def dessiner_coeur(ecran, coeur):
     pygame.draw.polygon(
         ecran, rose, [(x, y + 7), (x + 23, y + 7), (x + 12, y + 23)]
     )
+
+def dessiner_bonus(ecran, bonus):
+    if isinstance(bonus, Coeur):
+        dessiner_coeur(ecran, bonus)
+    elif isinstance(bonus, BonusBouclier):
+        rectangle = pygame.Rect(bonus.zone_collision())
+        pygame.draw.rect(ecran, (80, 190, 255), rectangle, 3)

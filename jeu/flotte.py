@@ -1,6 +1,6 @@
 from jeu.ennemis import Ennemi
 from jeu.ennemis.comportements_tir import TirSimple
-from jeu.ennemis.bouclier import Bouclier
+from jeu.bouclier import Bouclier
 from jeu.ennemis.boss import Boss
 
 class Flotte:
