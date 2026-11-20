@@ -1,5 +1,6 @@
 from jeu.ennemis import Ennemi
 from jeu.ennemis.comportements_tir import TirSimple
+from jeu.ennemis.bouclier import Bouclier
 
 class Flotte:
     def __init__(self, grille):
@@ -21,6 +22,8 @@ class Flotte:
                     ennemi = Ennemi(x, y, TirSimple())
                 elif case == "R":
                     ennemi = Ennemi(x,y, TirSimple(), rapide=True)
+                elif case == "P":
+                    ennemi = Ennemi(x, y, TirSimple(), bouclier=Bouclier())
                 else:
                     raise ValueError(f"Case de vague inconnue : {case}")
 

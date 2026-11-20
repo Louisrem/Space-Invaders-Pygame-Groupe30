@@ -12,6 +12,8 @@ def dessiner_flotte(ecran, flotte):
             ennemi.x, ennemi.y, ennemi.largeur, ennemi.hauteur
         )
         pygame.draw.rect(ecran,(240,100,100), rectangle)
+        if ennemi.bouclier is not None and ennemi.bouclier.actif:
+            pygame.draw.rect(ecran, (80,190,255), rectangle, 2)
 
 def dessiner_projectile(ecran, projectile):
     rectangle = pygame.Rect(projectile.zone_collision())

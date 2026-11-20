@@ -26,9 +26,11 @@ class Partie:
                 if rectangles_se_chevauchent(
                     projectile.zone_collision(), ennemi.zone_collision()
                ):
-                    self.flotte.ennemis.remove(ennemi)
                     self.projectiles.remove(projectile)
-                    self.score += 1
+
+                    if ennemi.subir_impact():
+                        self.flotte.ennemis.remove(ennemi)
+                        self.score += 1
                     break
 
     def retirer_projectiles_hors_ecran(self):
