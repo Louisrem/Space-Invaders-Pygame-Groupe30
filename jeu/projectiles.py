@@ -21,3 +21,33 @@ class Projectile:
     def est_sorti_par_le_bas(self, hauteur_ecran):
         haut = self.y - self.hauteur
         return haut >= hauteur_ecran
+
+class Mine(Projectile):
+    rayon_detection = 22
+    rayon_explosion = 65
+
+    def __init__(self, x, y, hauteur_arret):
+        super().__init__(x, y)
+        self.largeur = 16
+        self.hauteur = 16
+        self.y_arret = hauteur_arret + self.hauteur // 2
+
+    @property
+    def centre(self):
+        return self.x, self.y - self.hauteur // 2
+
+    @property
+    def armee(self):
+        return self.y <= self.y_arret
+
+    def avancer(self):
+        if not self.armee:
+            super().avancer()
+            self.y = max(self.y, self.y_arret)
+
+    def dans_rayon(self, zone, rayon):
+        gauche, haut, largeur, hauteur = zone
+        x, y = self.centre
+        proche_x = max(gauche, min(x, gauche + largeur))
+        proche_y = max(haut, min(y, haut + hauteur))
+        return (x - proche_x) ** 2 + (y - proche_y) ** 2 <= rayon ** 2

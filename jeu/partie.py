@@ -2,7 +2,7 @@ from jeu.flotte import Flotte
 from jeu.vagues import BONUS_PAR_VAGUE, VAGUES
 from jeu.etat_partie import EtatPartie
 from random import randint
-from jeu.bonus import Coeur
+from jeu.projectiles import Mine
 
 def rectangles_se_chevauchent(zone_a, zone_b):
     x_a, y_a, largeur_a, hauteur_a = zone_a
@@ -23,6 +23,9 @@ class Partie:
         self.etat = EtatPartie.EN_COURS
         self.bonus = None
         self.tours_avant_bonus = None
+        self.mine = None
+        self.explosion_mine = None
+        self.tours_explosion_mine = 0
 
     def gerer_collisions(self):
         for projectile in self.projectiles[:]:
@@ -32,10 +35,46 @@ class Partie:
                ):
                     self.projectiles.remove(projectile)
 
-                    if ennemi.subir_impact():
-                        self.flotte.ennemis.remove(ennemi)
-                        self.score += 1
+                    self._appliquer_impact(ennemi)
                     break
+
+    def _appliquer_impact(self, ennemi):
+        if ennemi.subir_impact():
+            self.flotte.ennemis.remove(ennemi)
+            self.score += 1
+
+    def tirer_mine(self, joueur, hauteur_ecran):
+        if self.etat == EtatPartie.EN_COURS and self.mine is None:
+            x = joueur.x + joueur.largeur // 2
+            self.mine = Mine(x, joueur.y, hauteur_ecran // 2)
+
+    def actualiser_mine(self):
+        if self.tours_explosion_mine > 0:
+            self.tours_explosion_mine -= 1
+            if self.tours_explosion_mine == 0:
+                self.explosion_mine = None
+
+        mine = self.mine
+        if mine is None:
+            return
+
+        mine.avancer()
+        if not mine.armee:
+            return
+
+        if not any(
+            mine.dans_rayon(ennemi.zone_collision(), mine.rayon_detection)
+            for ennemi in self.flotte.ennemis
+        ):
+            return
+
+        self.mine = None
+        self.explosion_mine = (mine.centre, mine.rayon_explosion)
+        self.tours_explosion_mine = 12
+
+        for ennemi in self.flotte.ennemis[:]:
+            if mine.dans_rayon(ennemi.zone_collision(), mine.rayon_explosion):
+                self._appliquer_impact(ennemi)
 
     def retirer_projectiles_hors_ecran(self):
         for projectile in self.projectiles[:]:

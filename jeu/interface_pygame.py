@@ -70,3 +70,15 @@ def dessiner_bonus(ecran, bonus):
     elif isinstance(bonus, BonusBouclier):
         rectangle = pygame.Rect(bonus.zone_collision())
         pygame.draw.rect(ecran, (80, 190, 255), rectangle, 3)
+
+
+def dessiner_mine(ecran, mine):
+    couleur = (255, 205, 85) if mine.armee else (206, 160, 65)
+    if mine.armee:
+        pygame.draw.circle(ecran, couleur, mine.centre, mine.rayon_detection, 1)
+    pygame.draw.circle(ecran, couleur, mine.centre, mine.largeur // 2)
+
+
+def dessiner_explosion_mine(ecran, explosion):
+    centre, rayon = explosion
+    pygame.draw.circle(ecran, (255, 145, 70), centre, rayon, 3)

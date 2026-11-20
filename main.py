@@ -1,7 +1,19 @@
 import pygame
 
 from jeu.vaisseau import Vaisseau
-from jeu.interface_pygame import dessiner_vaisseau, dessiner_flotte, dessiner_projectile, dessiner_score, dessiner_vague, dessiner_vies, dessiner_message_centre, dessiner_avertissement_boss, dessiner_bonus
+from jeu.interface_pygame import (
+    dessiner_avertissement_boss,
+    dessiner_bonus,
+    dessiner_explosion_mine,
+    dessiner_flotte,
+    dessiner_message_centre,
+    dessiner_mine,
+    dessiner_projectile,
+    dessiner_score,
+    dessiner_vague,
+    dessiner_vaisseau,
+    dessiner_vies,
+)
 from jeu.flotte import Flotte
 from jeu.projectiles import Projectile
 from jeu.partie import Partie
@@ -38,6 +50,9 @@ def main():
                 y = joueur.y
                 projectiles.append(Projectile(x,y))
                 print(len(projectiles))
+            elif evenement.type == pygame.KEYDOWN and evenement.key == pygame.K_x:
+                partie.tirer_mine(joueur, ecran.get_height())
+
         if partie.etat == EtatPartie.EN_COURS:
             touches = pygame.key.get_pressed()
 
@@ -59,6 +74,7 @@ def main():
             partie.verifier_defaite(joueur)
 
             if partie.etat == EtatPartie.EN_COURS:
+                partie.actualiser_mine()
                 partie.actualiser_bonus(joueur, ecran.get_width(), ecran.get_height())
                 partie.verifier_fin_vague()
 
@@ -69,6 +85,10 @@ def main():
 
         if partie.bonus is not None:
             dessiner_bonus(ecran, partie.bonus)
+        if partie.mine is not None:
+            dessiner_mine(ecran, partie.mine)
+        if partie.explosion_mine is not None:
+            dessiner_explosion_mine(ecran, partie.explosion_mine)
 
         for projectile in projectiles:
             dessiner_projectile(ecran, projectile)
