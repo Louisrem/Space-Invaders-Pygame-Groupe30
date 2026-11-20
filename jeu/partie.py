@@ -3,6 +3,7 @@ from jeu.vagues import BONUS_PAR_VAGUE, VAGUES
 from jeu.etat_partie import EtatPartie
 from random import randint
 from jeu.projectiles import Mine
+from time import monotonic
 
 def rectangles_se_chevauchent(zone_a, zone_b):
     x_a, y_a, largeur_a, hauteur_a = zone_a
@@ -21,6 +22,13 @@ class Partie:
         self.niveau = 1
         self.projectiles_ennemis = []
         self.etat = etat_initial
+
+        self.debut = None
+        self.fin = None
+
+        if self.etat == EtatPartie.EN_COURS:
+            self.debut = monotonic()
+
         self.bonus = None
         self.tours_avant_bonus = None
         self.mine = None
@@ -41,7 +49,19 @@ class Partie:
 
     def demarrer(self):
         if self.etat == EtatPartie.MENU:
+            self.debut = monotonic()
             self.etat = EtatPartie.EN_COURS
+
+    def _terminer(self, etat_final):
+        self.fin = monotonic()
+        self.etat = etat_final
+
+    def duree_secondes(self):
+        if self.debut is None:
+            return 0
+
+        fin = self.fin if self.fin is not None else monotonic()
+        return int(fin - self.debut)
 
     def _appliquer_impact(self, ennemi):
         if ennemi.subir_impact():
@@ -107,17 +127,17 @@ class Partie:
             if self.niveau in BONUS_PAR_VAGUE:
                 self.tours_avant_bonus = randint(120, 300)
         else:
-            self.etat = EtatPartie.VICTOIRE
+            self._terminer(EtatPartie.VICTOIRE)
 
     def verifier_defaite(self, joueur):
         if joueur.vies == 0:
-            self.etat = EtatPartie.DEFAITE
+            self._terminer(EtatPartie.DEFAITE)
             return
 
         for ennemi in self.flotte.ennemis:
             bas_ennemi = ennemi.y + ennemi.hauteur
             if bas_ennemi >= joueur.y:
-                self.etat = EtatPartie.DEFAITE
+                self._terminer(EtatPartie.DEFAITE)
                 return
 
     def actualiser_tirs_ennemis(self, hauteur_ecran):

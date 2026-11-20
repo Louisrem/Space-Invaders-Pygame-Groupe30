@@ -104,3 +104,9 @@ def dessiner_menu(ecran, police):
     ecran.blit(titre, titre.get_rect(center=(centre_x, centre_y - 40)))
 
     dessiner_message_centre(ecran, police, "Entrée pour jouer")
+
+def dessiner_chrono(ecran, police, duree_secondes):
+    minutes, secondes = divmod(duree_secondes, 60)
+    texte = police.render(f"Temps : {minutes:02d}:{secondes:02d}", True, (255, 255, 255))
+    position = texte.get_rect(topright=(ecran.get_width() - 15, 37))
+    ecran.blit(texte, position)

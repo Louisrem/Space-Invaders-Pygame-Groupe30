@@ -14,7 +14,8 @@ from jeu.interface_pygame import (
     dessiner_vaisseau,
     dessiner_vies,
     dessiner_etat_mine,
-    dessiner_menu
+    dessiner_menu,
+    dessiner_chrono
 )
 from jeu.flotte import Flotte
 from jeu.projectiles import Projectile
@@ -115,6 +116,9 @@ def main():
         dessiner_vies(ecran, police, joueur.vies)
         dessiner_vague(ecran, police, partie.niveau, len(partie.flotte.ennemis))
 
+        if partie.etat == EtatPartie.EN_COURS:
+            dessiner_chrono(ecran, police, partie.duree_secondes())
+
         dessiner_etat_mine(
             ecran, police, partie.mine is not None, partie.ennemis_avant_mine()
         )
@@ -126,6 +130,9 @@ def main():
 
         if partie.etat in (EtatPartie.VICTOIRE, EtatPartie.DEFAITE):
             dessiner_message_centre(ecran, police, "Entrée pour rejouer", decalage_y=40)
+            minutes, secondes = divmod(partie.duree_secondes(), 60)
+            texte_temps = f"Temps : {minutes:02d}:{secondes:02d}"
+            dessiner_message_centre(ecran, police, texte_temps, decalage_y=80)
 
         pygame.display.flip()
 
