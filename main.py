@@ -2,6 +2,7 @@ import pygame
 
 from jeu.vaisseau import Vaisseau
 from jeu.interface_pygame import (
+    charger_sprite_vaisseau,
     dessiner_avertissement_boss,
     dessiner_bonus,
     dessiner_explosion_mine,
@@ -27,7 +28,7 @@ from jeu.classement import enregistrer_resultat, meilleurs_resultats
 
 
 def creer_partie(etat_initial):
-    joueur = Vaisseau(380, 550)
+    joueur = Vaisseau(376, 550)
     flotte = Flotte(VAGUES[1])
     partie = Partie(flotte, [], etat_initial=etat_initial)
     return joueur, partie
@@ -40,6 +41,7 @@ def main():
     en_cours = True
 
     joueur, partie = creer_partie(EtatPartie.MENU)
+    sprite_vaisseau = charger_sprite_vaisseau((joueur.largeur, joueur.hauteur))
     classement_affiche = None
 
     pygame.font.init()
@@ -113,7 +115,7 @@ def main():
 
         ecran.fill((0,0,0))
         dessiner_avertissement_boss(ecran, partie.flotte)
-        dessiner_vaisseau(ecran,joueur)
+        dessiner_vaisseau(ecran, joueur, sprite_vaisseau)
         dessiner_flotte(ecran,partie.flotte)
 
         if partie.bonus is not None:

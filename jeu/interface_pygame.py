@@ -1,12 +1,18 @@
+from pathlib import Path
+
 import pygame
 from jeu.ennemis.boss import Boss
 from jeu.bonus import BonusBouclier, Coeur
 
-def dessiner_vaisseau(ecran, vaisseau):
-    rectangle = pygame.Rect(
-        vaisseau.x, vaisseau.y, vaisseau.largeur, vaisseau.hauteur
-    )
-    pygame.draw.rect(ecran,(80,220,160), rectangle)
+def charger_sprite_vaisseau(taille):
+    chemin = Path(__file__).resolve().parent.parent / "assets" / "images" / "vaisseau.png"
+    sprite = pygame.image.load(chemin).convert_alpha()
+    return pygame.transform.scale(sprite, taille)
+
+
+def dessiner_vaisseau(ecran, vaisseau, sprite):
+    rectangle = pygame.Rect(vaisseau.zone_collision())
+    ecran.blit(sprite, rectangle.topleft)
     if vaisseau.bouclier is not None and vaisseau.bouclier.actif:
         pygame.draw.rect(ecran, (80, 190, 255), rectangle, 2)
 

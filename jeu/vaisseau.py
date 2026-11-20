@@ -4,8 +4,8 @@ class Vaisseau:
     def __init__(self,x,y):
         self.x = x
         self.y = y
-        self.largeur = 40
-        self.hauteur = 20
+        self.largeur = 48
+        self.hauteur = 24
         self.vies = 3
         self.bouclier = None
 
