@@ -2,8 +2,11 @@
 """
 
 from abc import ABC, abstractmethod
+from random import randint, sample
+
+from ...terrain import LARGEUR_TERRAIN
 from ..projectiles import Projectile, ProjectileBarrage
-from random import randint
+from ..vaisseau import Vaisseau
 
 class ComportementTir(ABC):
     """Définit les règles communes aux comportements de tir des ennemis.
@@ -89,8 +92,8 @@ class TirSimple(ComportementTir):
 class TirDeBarrage(ComportementTir):
     """Annonce trois colonnes, puis lance un projectile dans chacune.
 
-    Les colonnes sont choisies selon la position de l'ennemi au moment
-    de l'annonce. Elles restent fixes même si l'ennemi se déplace.
+    Les colonnes sont tirées au hasard sur la largeur du terrain.
+    Elles restent fixes entre l'annonce et le lancement des tirs.
     """
 
     def __init__(self):
@@ -105,7 +108,7 @@ class TirDeBarrage(ComportementTir):
         d'avertissement, lance les trois tirs et attend 120 tours avant
         la prochaine annonce.
 
-        :param ennemi: Ennemi dont la position sert à placer les colonnes.
+        :param ennemi: Ennemi qui utilise ce comportement.
         :type ennemi: Ennemi
         :return: [] pendant l'attente ou l'annonce, puis les trois tirs.
         :rtype: list[ProjectileBarrage]
@@ -115,9 +118,7 @@ class TirDeBarrage(ComportementTir):
             return []
 
         if not self.colonnes_annoncees:
-            centre = ennemi.x + ennemi.largeur // 2
-            ecart = ennemi.largeur // 3
-            self.colonnes_annoncees = [centre - ecart, centre, centre + ecart]
+            self.colonnes_annoncees = self._choisir_colonnes()
             self.tours_restants = 60
             return []
 
@@ -125,3 +126,20 @@ class TirDeBarrage(ComportementTir):
         self.colonnes_annoncees = []
         self.tours_restants = 120
         return projectiles
+
+
+    @staticmethod
+    def _choisir_colonnes():
+        """Tire trois colonnes dont les projectiles restent dans le terrain."""
+        nombre = 3
+        largeur_tir = ProjectileBarrage.LARGEUR
+        minimum = largeur_tir // 2
+        maximum = LARGEUR_TERRAIN - largeur_tir + minimum
+        ecart_minimal = Vaisseau.LARGEUR + largeur_tir + 18
+
+        # On réserve l'écart avant le tirage. Deux positions distinctes,
+        # une fois triées, sont déjà séparées d'au moins un pixel.
+        decalage = ecart_minimal - 1
+        positions = range(minimum, maximum - (nombre - 1) * decalage + 1)
+        points = sorted(sample(positions, nombre))
+        return [x + indice * decalage for indice, x in enumerate(points)]

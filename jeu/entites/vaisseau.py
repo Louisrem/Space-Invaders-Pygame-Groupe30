@@ -6,6 +6,8 @@ class Vaisseau:
     """Représente le vaisseau du joueur et son état pendant la partie.
     """
 
+    LARGEUR = 48
+
     def __init__(self,x,y):
         """Place le vaisseau avec trois vies.
 
@@ -16,7 +18,7 @@ class Vaisseau:
         """
         self.x = x
         self.y = y
-        self.largeur = 48
+        self.largeur = self.LARGEUR
         self.hauteur = 24
         self.vies = 3
         self.bouclier = None

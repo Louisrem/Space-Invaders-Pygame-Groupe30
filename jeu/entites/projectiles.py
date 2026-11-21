@@ -4,6 +4,8 @@ class Projectile:
     """Représente un tir vertical utilisé par le joueur ou les ennemis.
     """
 
+    LARGEUR = 6
+
     def __init__(self, x, y, direction=-1):
         """Place un tir à l'endroit où il apparaît.
 
@@ -17,7 +19,7 @@ class Projectile:
         self.x = x
         self.y = y
         self.vitesse = 8
-        self.largeur = 6
+        self.largeur = self.LARGEUR
         self.hauteur = 12
         self.direction = direction
 
