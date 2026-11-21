@@ -31,10 +31,16 @@ class TestPartie(unittest.TestCase):
 
     def test_une_flotte_vide_passe_a_la_vague_suivante(self):
         """Vérifie qu'une vague vidée charge la formation suivante."""
-        partie = Partie(Flotte((".",)), [])
+        flotte = Flotte(("N",))
+        flotte.ennemis[0].x = 800 - flotte.ennemis[0].largeur
+        flotte.deplacer(800)
+        self.assertGreater(flotte.vitesse, 2)
+        flotte.ennemis.clear()
+        partie = Partie(flotte, [])
         partie.actualiser(self.joueur, 800, 600)
         self.assertEqual(partie.niveau, 2)
         self.assertEqual(len(partie.flotte.ennemis), 15)
+        self.assertEqual(partie.flotte.vitesse, 2)
 
     def test_un_ennemi_a_la_hauteur_du_vaisseau_declenche_la_defaite(self):
         """Vérifie la défaite si la flotte atteint le joueur."""

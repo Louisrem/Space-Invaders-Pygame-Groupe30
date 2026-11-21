@@ -37,7 +37,7 @@ class Flotte:
             la droite.
         :type direction: int
         :param vitesse: Distance parcourue à chaque tour, en pixels.
-        :type vitesse: int
+        :type vitesse: float
         :param largeur_ecran: Largeur du terrain en pixels.
         :type largeur_ecran: int
         :return: La direction à garder et un booléen signalant le bord.
@@ -60,6 +60,7 @@ class Flotte:
 
         Le groupe normal déclenche la descente. Quand seuls les rapides
         restent, leur contact avec le bord déclenche la descente.
+        Chaque descente augmente la vitesse des deux groupes.
 
         :param largeur_ecran: Largeur du terrain en pixels.
         :type largeur_ecran: int
@@ -77,3 +78,4 @@ class Flotte:
         if bord_lents or (not lents and bord_rapides):
             for ennemi in self.ennemis:
                 ennemi.y += 25
+            self.vitesse += 0.25
