@@ -2,7 +2,6 @@
 
 from .constantes import HAUTEUR_TERRAIN, LARGEUR_TERRAIN, EtatPartie, EvenementPartie
 from .flotte import Flotte
-from .projectiles import rectangles_se_chevauchent
 from .vagues import VAGUES
 from .vaisseau import Vaisseau
 
@@ -145,9 +144,7 @@ class Partie:
 
         for projectile in self._projectiles_ennemis[:]:
             projectile.avancer()
-            if rectangles_se_chevauchent(
-                projectile.zone_collision(), self._joueur.zone_collision()
-            ):
+            if projectile.touche(self._joueur):
                 self._projectiles_ennemis.remove(projectile)
                 self._joueur.perdre_vie()
                 self._evenements.append(EvenementPartie.IMPACT_JOUEUR)

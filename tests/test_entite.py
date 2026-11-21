@@ -20,6 +20,12 @@ class TestEntite(unittest.TestCase):
         """Par défaut, la zone part du coin en haut à gauche."""
         self.assertEqual(Vaisseau(10, 20).zone_collision(), (10, 20, 48, 24))
 
+    def test_touche_detecte_le_chevauchement(self):
+        """Deux entités qui se recouvrent se touchent, sinon non."""
+        joueur = Vaisseau(100, 100)
+        self.assertTrue(joueur.touche(Vaisseau(120, 110)))
+        self.assertFalse(joueur.touche(Vaisseau(200, 100)))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -53,7 +53,7 @@ vaisseau.
 main.py              boucle du jeu : lit le clavier, actualise, dessine
 jeu/                 règles du jeu, sans Pygame
   constantes.py      taille du terrain, états et événements de la partie
-  entite.py          classe mère Entite (position, taille, zone de collision)
+  entite.py          classe mère Entite (position, taille, collisions)
   vagues.py          grilles des vagues d'ennemis
   partie.py          Partie : tirs, collisions, vagues, victoire/défaite
   vaisseau.py        Vaisseau du joueur

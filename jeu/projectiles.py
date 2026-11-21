@@ -1,4 +1,4 @@
-"""Les armes du jeu (tir normal et mine) et le test de collision.
+"""Les armes du jeu : le tir normal et la mine.
 
 Pour ajouter une arme, hérite de Projectile et redéfinis avancer() ou
 ennemis_touches(). La partie traite toutes les armes de la même façon
@@ -7,23 +7,6 @@ ennemis_touches(). La partie traite toutes les armes de la même façon
 
 from .constantes import HAUTEUR_TERRAIN, EvenementPartie
 from .entite import Entite
-
-
-def rectangles_se_chevauchent(zone_a, zone_b):
-    """Vérifie si deux rectangles (x, y, largeur, hauteur) se recouvrent.
-
-    :param zone_a: Premier rectangle.
-    :type zone_a: tuple[int, int, int, int]
-    :param zone_b: Second rectangle au même format.
-    :type zone_b: tuple[int, int, int, int]
-    :return: True si les rectangles se recouvrent sur les deux axes.
-    :rtype: bool
-    """
-    x_a, y_a, largeur_a, hauteur_a = zone_a
-    x_b, y_b, largeur_b, hauteur_b = zone_b
-    chevauchement_x = x_a < x_b + largeur_b and x_a + largeur_a > x_b
-    chevauchement_y = y_a < y_b + hauteur_b and y_a + hauteur_a > y_b
-    return chevauchement_x and chevauchement_y
 
 
 class Projectile(Entite):
@@ -79,7 +62,7 @@ class Projectile(Entite):
         :rtype: list[Ennemi]
         """
         for ennemi in ennemis:
-            if rectangles_se_chevauchent(self.zone_collision(), ennemi.zone_collision()):
+            if self.touche(ennemi):
                 return [ennemi]
         return []
 
