@@ -78,8 +78,8 @@ Pour ajouter :
   [ennemis.py](jeu/ennemis.py).
 
 Sans rien d'autre, une nouvelle classe prend l'image de sa classe mère. Pour
-lui donner sa propre image, mets le PNG dans `assets/images/` et ajoute une
-ligne dans `FICHIERS_IMAGES` et `IMAGES` de [affichage.py](interface/affichage.py).
+lui donner sa propre image, mets le PNG dans `assets/images/ennemis/` (ou
+`projectiles/`) et ajoute une ligne dans `IMAGES` de [affichage.py](interface/affichage.py).
 
 ## Tests
 

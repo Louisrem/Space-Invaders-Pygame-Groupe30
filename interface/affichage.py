@@ -12,11 +12,9 @@ from jeu.vaisseau import Vaisseau
 DOSSIER_ASSETS = Path(__file__).resolve().parent.parent / "assets"
 DOSSIER_IMAGES = DOSSIER_ASSETS / "images"
 
-# Fichiers PNG à charger, rangés par sous-dossier de assets/images/.
-FICHIERS_IMAGES = {
-    "ennemis": ("simple", "tireur", "boss"),
-    "projectiles": ("tir_joueur", "tir_ennemi", "mine", "mine_armee"),
-}
+# Sous-dossiers de assets/images/ dont on charge tous les PNG.
+# Le nom du fichier sert de nom à l'image : « boss.png » -> "boss".
+DOSSIERS_IMAGES = ("ennemis", "projectiles")
 
 # Classe -> nom de l'image (ou fonction qui le choisit selon l'état de l'objet).
 # C'est l'interface qui choisit les images : jeu/ ne connaît aucun fichier.
@@ -51,9 +49,9 @@ def charger_images(taille_ecran):
         "fond": pygame.transform.smoothscale(fond, taille_ecran),
         "vaisseau": pygame.transform.scale(vaisseau, (Vaisseau.LARGEUR, Vaisseau.HAUTEUR)),
     }
-    for dossier, noms in FICHIERS_IMAGES.items():
-        for nom in noms:
-            images[nom] = _charger(DOSSIER_IMAGES / dossier / f"{nom}.png")
+    for dossier in DOSSIERS_IMAGES:
+        for chemin in (DOSSIER_IMAGES / dossier).glob("*.png"):
+            images[chemin.stem] = _charger(chemin)
     return images
 
 

@@ -2,7 +2,7 @@
 
 import unittest
 
-from interface.affichage import nom_image
+from interface.affichage import DOSSIER_IMAGES, DOSSIERS_IMAGES, IMAGES, nom_image
 from interface.sons import DOSSIER_SONS, SONS
 from jeu.ennemis import Boss, Ennemi, Tireur
 from jeu.projectiles import Mine, Projectile
@@ -29,6 +29,17 @@ class TestAffichage(unittest.TestCase):
 
         self.assertEqual(nom_image(TireurRapide(0, 0)), "tireur")
         self.assertEqual(nom_image(TirDouble(0, 0)), "tir_joueur")
+
+    def test_chaque_image_existe(self):
+        """Chaque nom d'image de IMAGES a son PNG dans un des dossiers chargés."""
+        fichiers = {
+            chemin.stem
+            for dossier in DOSSIERS_IMAGES
+            for chemin in (DOSSIER_IMAGES / dossier).glob("*.png")
+        }
+        for image in IMAGES.values():
+            if isinstance(image, str):
+                self.assertIn(image, fichiers)
 
     def test_chaque_son_existe(self):
         """Tous les fichiers WAV de SONS sont bien dans assets/sons/effets/."""
