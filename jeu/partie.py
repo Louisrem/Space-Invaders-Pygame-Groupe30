@@ -38,7 +38,7 @@ class Partie:
 
     @property
     def score(self):
-        """Nombre d'ennemis éliminés."""
+        """Points gagnés : 1 par ennemi, plus pour le boss."""
         return self._score
 
     @property
@@ -139,7 +139,7 @@ class Partie:
                 for ennemi in touches:
                     if ennemi.subir_impact():
                         self._flotte.retirer(ennemi)
-                        self._score += 1
+                        self._score += ennemi.POINTS
             elif projectile.est_sorti(HAUTEUR_TERRAIN):
                 self._projectiles_joueur.remove(projectile)
 

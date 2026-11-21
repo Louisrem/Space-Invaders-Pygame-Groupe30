@@ -74,6 +74,7 @@ class Ennemi(Entite):
 
     LARGEUR = 40
     HAUTEUR = 25
+    POINTS = 1   # points gagnés quand on l'élimine
 
     def __init__(self, x, y, comportement_tir=None, pv=1):
         """Crée un ennemi à sa position de départ.
@@ -131,6 +132,7 @@ class Boss(Ennemi):
 
     LARGEUR = 64
     HAUTEUR = 35
+    POINTS = 5
     DELAI_TIR = 60
     DELAI_TIR_ENERVE = 25
 

@@ -5,7 +5,8 @@ du [Space Invaders de départ](https://github.com/attreyabhatt/Space-Invaders-Py
 conservé dans [archive/](archive/).
 
 Tu pilotes un vaisseau avec trois vies et tu dois détruire trois vagues
-d'ennemis. La dernière vague contient un boss qui résiste à trois tirs.
+d'ennemis. La dernière vague contient un boss qui résiste à trois tirs et
+rapporte 5 points (1 point pour les autres ennemis).
 
 ## Installation
 

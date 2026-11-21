@@ -141,6 +141,18 @@ class TestPartie(unittest.TestCase):
         partie.deplacer_joueur(1)
         self.assertEqual(partie.joueur.x, depart + partie.joueur.VITESSE)
 
+    def test_le_boss_rapporte_plus_de_points(self):
+        """Éliminer le boss rapporte Boss.POINTS et pas 1 seul point."""
+        partie = Partie({1: ("B",), 2: ("N",)}, etat_initial=EtatPartie.EN_COURS)
+        boss = list(partie.flotte)[0]
+        boss.subir_impact()
+        boss.subir_impact()  # il ne lui reste qu'un PV
+        boss.x, boss.y = partie.joueur.x, partie.joueur.y - 100
+        partie.tirer(Projectile)
+        for _ in range(20):
+            partie.actualiser()
+        self.assertEqual(partie.score, Boss.POINTS)
+
 
 if __name__ == "__main__":
     unittest.main()
