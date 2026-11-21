@@ -83,7 +83,7 @@ class Flotte:
         if touche_bord:
             self._direction = -self._direction
             for ennemi in self._ennemis:
-                ennemi.y += self.DESCENTE
+                ennemi.decaler(0, self.DESCENTE)
         else:
             for ennemi in self._ennemis:
-                ennemi.x += distance
+                ennemi.decaler(distance)

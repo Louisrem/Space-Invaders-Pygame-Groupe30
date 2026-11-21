@@ -44,7 +44,7 @@ class Vaisseau(Entite):
         :type largeur_ecran: int
         """
         limite_droite = largeur_ecran - self.largeur
-        self.x = min(max(0, self.x + distance), limite_droite)
+        self._x = min(max(0, self._x + distance), limite_droite)
 
     def perdre_vie(self):
         """Retire une vie si le vaisseau en a encore."""

@@ -9,6 +9,11 @@ from jeu.partie import Partie
 from jeu.projectiles import Mine, Projectile
 
 
+def placer(entite, x, y):
+    """Met une entité à une position précise pour préparer un test."""
+    entite.decaler(x - entite.x, y - entite.y)
+
+
 class TestPartie(unittest.TestCase):
     """Tests unitaires de l'évolution d'une partie."""
 
@@ -43,7 +48,7 @@ class TestPartie(unittest.TestCase):
         """Un tir qui touche un ennemi à 1 PV l'élimine."""
         partie = Partie({1: ("NN",), 2: ("N",)}, etat_initial=EtatPartie.EN_COURS)
         ennemi = list(partie.flotte)[0]
-        ennemi.x, ennemi.y = partie.joueur.x, partie.joueur.y - 100
+        placer(ennemi, partie.joueur.x, partie.joueur.y - 100)
         partie.tirer(Projectile)
 
         for _ in range(20):
@@ -76,10 +81,10 @@ class TestPartie(unittest.TestCase):
         partie = Partie({1: ("T",)}, etat_initial=EtatPartie.EN_COURS)
         joueur = partie.joueur
         tireur = list(partie.flotte)[0]
-        tireur.y = joueur.y - 60
+        placer(tireur, tireur.x, joueur.y - 60)
 
         for _ in range(300):
-            joueur.x = tireur.x  # le vaisseau reste sous le tireur
+            placer(joueur, tireur.x, joueur.y)  # le vaisseau reste sous le tireur
             partie.actualiser()
             if joueur.vies < 3:
                 break
@@ -95,8 +100,8 @@ class TestPartie(unittest.TestCase):
         while not mine.armee:
             mine.avancer()
         a, b = list(partie.flotte)
-        a.x, a.y = mine.x - 20, mine.y - 30
-        b.x, b.y = mine.x + 30, mine.y - 30
+        placer(a, mine.x - 20, mine.y - 30)
+        placer(b, mine.x + 30, mine.y - 30)
 
         self.assertEqual(mine.ennemis_touches(partie.flotte), [a, b])
 
@@ -147,7 +152,7 @@ class TestPartie(unittest.TestCase):
         boss = list(partie.flotte)[0]
         boss.subir_impact()
         boss.subir_impact()  # il ne lui reste qu'un PV
-        boss.x, boss.y = partie.joueur.x, partie.joueur.y - 100
+        placer(boss, partie.joueur.x, partie.joueur.y - 100)
         partie.tirer(Projectile)
         for _ in range(20):
             partie.actualiser()

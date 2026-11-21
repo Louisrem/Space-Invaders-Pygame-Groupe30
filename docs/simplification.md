@@ -29,7 +29,8 @@ Le code passe d'environ 1 800 à 800 lignes (docstrings comprises).
 - **Aucun nom d'image dans `jeu/`** : c'est `interface/affichage.py` qui
   associe chaque classe à son image (`IMAGES`, `nom_image()`). Une nouvelle
   sous-classe sans image prend celle de sa classe mère (parcours du `__mro__`).
-- **Encapsulation** (cours 04) : `vies`, `pv`, et tout l'état de `Partie`
+- **Encapsulation** (cours 04) : `vies`, `pv`, la position `x`/`y` des entités
+  (modifiée seulement par `decaler()`), et tout l'état de `Partie`
   (`score`, `etat`, `niveau`, `flotte`, `joueur`, listes de tirs) sont en
   lecture seule avec `@property` ; les listes sont rendues en tuple pour
   qu'on ne puisse pas les modifier de l'extérieur.

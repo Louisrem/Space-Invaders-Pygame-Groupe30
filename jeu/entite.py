@@ -23,6 +23,8 @@ class Entite:
     """Objet placé sur le terrain : vaisseau, ennemi ou projectile.
 
     Chaque sous-classe donne sa taille avec LARGEUR et HAUTEUR.
+    La position est en lecture seule (@property) : on la change seulement
+    avec decaler(), ou dans les méthodes de la classe et de ses sous-classes.
     """
 
     LARGEUR = 0
@@ -36,10 +38,31 @@ class Entite:
         :param y: Position verticale en pixels.
         :type y: int
         """
-        self.x = x
-        self.y = y
+        self._x = x
+        self._y = y
         self.largeur = self.LARGEUR
         self.hauteur = self.HAUTEUR
+
+    @property
+    def x(self):
+        """Position horizontale en pixels, en lecture seule."""
+        return self._x
+
+    @property
+    def y(self):
+        """Position verticale en pixels, en lecture seule."""
+        return self._y
+
+    def decaler(self, dx, dy=0):
+        """Déplace l'entité de quelques pixels.
+
+        :param dx: Décalage horizontal, négatif vers la gauche.
+        :type dx: int
+        :param dy: Décalage vertical, négatif vers le haut.
+        :type dy: int
+        """
+        self._x += dx
+        self._y += dy
 
     def zone_collision(self):
         """Renvoie le rectangle (x, y, largeur, hauteur) de l'entité.

@@ -25,7 +25,7 @@ class TestFlotte(unittest.TestCase):
         """Au bord, toute la flotte descend et repart dans l'autre sens."""
         flotte = Flotte(("N",))
         ennemi = list(flotte)[0]
-        ennemi.x = 800 - ennemi.largeur
+        ennemi.decaler(800 - ennemi.largeur - ennemi.x)
         y_depart = ennemi.y
 
         flotte.deplacer(800)

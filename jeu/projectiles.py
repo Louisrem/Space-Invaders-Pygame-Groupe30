@@ -40,7 +40,7 @@ class Projectile(Entite):
 
     def avancer(self):
         """Déplace le tir d'un tour dans sa direction."""
-        self.y += self.VITESSE * self.direction
+        self.decaler(0, self.VITESSE * self.direction)
 
     def zone_collision(self):
         """Renvoie le rectangle (x, y, largeur, hauteur) du tir.
@@ -95,7 +95,7 @@ class Mine(Projectile):
         """Fait monter la mine jusqu'à sa hauteur d'arrêt."""
         if not self.armee:
             super().avancer()
-            self.y = max(self.y, self._y_arret)
+            self._y = max(self._y, self._y_arret)
 
     def ennemis_touches(self, ennemis):
         """Explose si un ennemi est assez proche de la mine armée.

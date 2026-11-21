@@ -26,6 +26,14 @@ class TestEntite(unittest.TestCase):
         self.assertTrue(joueur.touche(Vaisseau(120, 110)))
         self.assertFalse(joueur.touche(Vaisseau(200, 100)))
 
+    def test_la_position_se_change_seulement_avec_decaler(self):
+        """x et y sont en lecture seule ; decaler() les modifie."""
+        ennemi = Boss(230, 60)
+        with self.assertRaises(AttributeError):
+            ennemi.x = 0
+        ennemi.decaler(5, 10)
+        self.assertEqual((ennemi.x, ennemi.y), (223, 70))
+
 
 if __name__ == "__main__":
     unittest.main()
