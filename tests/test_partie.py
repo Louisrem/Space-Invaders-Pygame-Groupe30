@@ -48,6 +48,30 @@ class TestPartie(unittest.TestCase):
         self.assertEqual(partie.etat, EtatPartie.DEFAITE)
         self.assertEqual(partie.resultat()["issue"], "defaite")
 
+    def test_le_dernier_ennemi_est_touche_au_moment_de_descendre(self):
+        """Vérifie la priorité de la défaite lors d'un impact simultané."""
+        self.joueur.x = 0
+        cas = (
+            (0, EtatPartie.DEFAITE, 1, 0),
+            (1, EtatPartie.EN_COURS, 2, 1),
+        )
+        for marge, etat_attendu, niveau_attendu, score_attendu in cas:
+            with self.subTest(pixels_avant_la_ligne=marge):
+                flotte = Flotte(("N",))
+                flotte.direction = -1
+                ennemi = flotte.ennemis[0]
+                ennemi.x = 0
+                ennemi.y = self.joueur.y - ennemi.hauteur - 25 - marge
+                partie = Partie(flotte, [])
+                partie.tirer_normal(self.joueur)
+
+                partie.actualiser(self.joueur, 800, 600)
+
+                self.assertEqual(ennemi.y + ennemi.hauteur, self.joueur.y - marge)
+                self.assertEqual(partie.etat, etat_attendu)
+                self.assertEqual(partie.niveau, niveau_attendu)
+                self.assertEqual(partie.score, score_attendu)
+
     def test_la_mine_se_recharge_apres_cinq_eliminations(self):
         """Vérifie la recharge de la mine après cinq éliminations."""
         flotte = Flotte(("NNNNN",))

@@ -74,10 +74,9 @@ class Partie:
     def actualiser(self, joueur, largeur_terrain, hauteur_terrain):
         """Fait avancer d'un tour une partie en cours.
 
-        Déplace la flotte et les tirs, traite les impacts, puis vérifie
-        la
-        défaite. Si la partie continue, met à jour la mine, le bonus et
-        la vague.
+        Déplace la flotte et vérifie si elle atteint la ligne du joueur
+        avant de traiter les impacts. Vérifie ensuite la défaite liée
+        aux vies, puis met à jour la mine, le bonus et la vague.
 
         :param joueur: Vaisseau de la partie.
         :type joueur: Vaisseau
@@ -90,6 +89,10 @@ class Partie:
             return
 
         self.flotte.deplacer(largeur_terrain)
+        self.verifier_defaite(joueur)
+        if self.etat == EtatPartie.DEFAITE:
+            return
+
         for projectile in self.projectiles:
             projectile.avancer()
 
