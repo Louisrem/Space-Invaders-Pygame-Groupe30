@@ -49,9 +49,9 @@ class Projectile(Entite):
         """
         return self.x - self.largeur // 2, self.y - self.hauteur, self.largeur, self.hauteur
 
-    def est_sorti(self, hauteur_ecran):
+    def est_sorti(self):
         """Indique si le tir a quitté le terrain par le haut ou par le bas."""
-        return self.y <= 0 or self.y - self.hauteur >= hauteur_ecran
+        return self.y <= 0 or self.y - self.hauteur >= HAUTEUR_TERRAIN
 
     def ennemis_touches(self, ennemis):
         """Renvoie les ennemis touchés à ce tour.

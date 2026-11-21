@@ -140,7 +140,7 @@ class Partie:
                     if ennemi.subir_impact():
                         self._flotte.retirer(ennemi)
                         self._score += ennemi.POINTS
-            elif projectile.est_sorti(HAUTEUR_TERRAIN):
+            elif projectile.est_sorti():
                 self._projectiles_joueur.remove(projectile)
 
     def _actualiser_projectiles_ennemis(self):
@@ -157,7 +157,7 @@ class Partie:
                 self._projectiles_ennemis.remove(projectile)
                 self._joueur.perdre_vie()
                 self._evenements.append(EvenementPartie.IMPACT_JOUEUR)
-            elif projectile.est_sorti(HAUTEUR_TERRAIN):
+            elif projectile.est_sorti():
                 self._projectiles_ennemis.remove(projectile)
 
     def _verifier_fin(self):
