@@ -17,6 +17,7 @@ from jeu.entites.ennemis.flotte import Flotte
 from jeu.entites.vaisseau import Vaisseau
 from jeu.etat_partie import EtatPartie
 from jeu.partie import Partie
+from jeu.terrain import HAUTEUR_TERRAIN, LARGEUR_TERRAIN
 from jeu.vagues import VAGUES
 
 
@@ -36,7 +37,7 @@ def creer_partie(etat_initial):
 def main():
     """Ouvre la fenêtre et exécute la boucle du jeu."""
     pygame.display.init()
-    ecran = pygame.display.set_mode((800,600))
+    ecran = pygame.display.set_mode((LARGEUR_TERRAIN, HAUTEUR_TERRAIN))
     fond = charger_fond(ecran.get_size())
     sons = SonsJeu()
     pygame.display.set_caption("Space Invaders - Groupe 30")
