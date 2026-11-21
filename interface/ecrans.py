@@ -21,20 +21,24 @@ def dessiner_message_centre(ecran, police, texte, decalage_y=0):
     ecran.blit(message, position)
 
 
-def dessiner_menu(ecran, police):
+def dessiner_menu(ecran, police, en_pause=False):
     """Affiche le menu et ses commandes.
 
     :param ecran: Surface sur laquelle dessiner.
     :type ecran: pygame.Surface
     :param police: Police utilisée pour le texte.
     :type police: pygame.font.Font
+    :param en_pause: Indique si une partie peut être reprise.
+    :type en_pause: bool
     """
     centre_x, centre_y = ecran.get_rect().center
 
-    titre = police.render("SPACE INVADERS", True, (255, 255, 255))
+    nom_ecran = "PAUSE" if en_pause else "SPACE INVADERS"
+    titre = police.render(nom_ecran, True, (255, 255, 255))
     ecran.blit(titre, titre.get_rect(center=(centre_x, centre_y - 40)))
 
-    dessiner_message_centre(ecran, police, "Entrée pour jouer")
+    commande = "Entrée pour reprendre" if en_pause else "Entrée pour jouer"
+    dessiner_message_centre(ecran, police, commande)
     dessiner_message_centre(ecran, police, "C pour voir le classement", decalage_y=40)
 
 
@@ -76,7 +80,7 @@ def dessiner_classement(ecran, police, resultats):
 
 
 def dessiner_fin_partie(ecran, police, partie):
-    """Affiche l'issue, les statistiques et la commande pour rejouer.
+    """Affiche l'issue, les statistiques et les commandes de fin.
 
     :param ecran: Surface sur laquelle dessiner.
     :type ecran: pygame.Surface
@@ -87,7 +91,8 @@ def dessiner_fin_partie(ecran, police, partie):
     """
     titre = "VICTOIRE !" if partie.etat == EtatPartie.VICTOIRE else "PARTIE TERMINÉE"
     dessiner_message_centre(ecran, police, titre)
-    dessiner_message_centre(ecran, police, "Entrée pour rejouer", decalage_y=40)
+    commandes = "Entrée pour rejouer  ·  Échap pour le menu"
+    dessiner_message_centre(ecran, police, commandes, decalage_y=40)
     minutes, secondes = divmod(partie.duree_secondes(), 60)
     texte_temps = f"Temps : {minutes:02d}:{secondes:02d}"
     dessiner_message_centre(ecran, police, texte_temps, decalage_y=80)

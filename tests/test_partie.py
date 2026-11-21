@@ -1,6 +1,7 @@
 """Vérifie les règles d'une partie sans ouvrir de fenêtre."""
 
 import unittest
+from unittest.mock import patch
 
 from jeu.entites.ennemis.flotte import Flotte
 from jeu.entites.projectiles import Projectile
@@ -28,6 +29,28 @@ class TestPartie(unittest.TestCase):
         partie.demarrer()
         partie.actualiser(self.joueur, 800, 600)
         self.assertGreater(flotte.ennemis[0].x, position)
+
+    def test_la_pause_fige_le_jeu_et_le_chronometre(self):
+        """Vérifie que la reprise conserve la flotte et exclut l'attente."""
+        flotte = Flotte(("N",))
+        with patch("jeu.partie.monotonic", return_value=10) as horloge:
+            partie = Partie(flotte, [])
+            position = flotte.ennemis[0].x
+            horloge.return_value = 15
+            partie.mettre_en_pause()
+
+            horloge.return_value = 35
+            partie.actualiser(self.joueur, 800, 600)
+            self.assertEqual(partie.etat, EtatPartie.PAUSE)
+            self.assertEqual(flotte.ennemis[0].x, position)
+            self.assertEqual(partie.duree_secondes(), 5)
+
+            partie.reprendre()
+            horloge.return_value = 37
+            partie.actualiser(self.joueur, 800, 600)
+            self.assertEqual(partie.etat, EtatPartie.EN_COURS)
+            self.assertGreater(flotte.ennemis[0].x, position)
+            self.assertEqual(partie.duree_secondes(), 7)
 
     def test_une_flotte_vide_passe_a_la_vague_suivante(self):
         """Vérifie qu'une vague vidée charge la formation suivante."""

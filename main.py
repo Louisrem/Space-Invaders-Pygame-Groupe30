@@ -63,14 +63,21 @@ def main():
                 if evenement.type == pygame.KEYDOWN and evenement.key == pygame.K_ESCAPE:
                     classement_affiche = None
             elif (
-                partie.etat == EtatPartie.MENU
+                partie.etat in (EtatPartie.MENU, EtatPartie.PAUSE)
                 and evenement.type == pygame.KEYDOWN
                 and evenement.key == pygame.K_c
             ):
                 classement_affiche = meilleurs_resultats()
+            elif evenement.type == pygame.KEYDOWN and evenement.key == pygame.K_ESCAPE:
+                if partie.etat == EtatPartie.EN_COURS:
+                    partie.mettre_en_pause()
+                elif partie.etat in (EtatPartie.VICTOIRE, EtatPartie.DEFAITE):
+                    joueur, partie = creer_partie(EtatPartie.MENU)
             elif evenement.type == pygame.KEYDOWN and evenement.key == pygame.K_RETURN:
                 if partie.etat == EtatPartie.MENU:
                     partie.demarrer()
+                elif partie.etat == EtatPartie.PAUSE:
+                    partie.reprendre()
                 elif partie.etat in (EtatPartie.VICTOIRE, EtatPartie.DEFAITE):
                     joueur, partie = creer_partie(EtatPartie.EN_COURS)
             elif evenement.type == pygame.KEYDOWN and evenement.key == pygame.K_SPACE:
@@ -79,9 +86,9 @@ def main():
                 partie.tirer_mine(joueur, ecran.get_height())
 
         ecran.blit(fond, (0, 0))
-        if partie.etat == EtatPartie.MENU:
+        if partie.etat in (EtatPartie.MENU, EtatPartie.PAUSE):
             if classement_affiche is None:
-                dessiner_menu(ecran, police)
+                dessiner_menu(ecran, police, en_pause=partie.etat == EtatPartie.PAUSE)
             else:
                 dessiner_classement(ecran, police, classement_affiche)
             pygame.display.flip()

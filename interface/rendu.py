@@ -297,6 +297,8 @@ def dessiner_partie(
     dessiner_vague(ecran, police, partie.niveau, len(partie.flotte.ennemis))
 
     if partie.etat == EtatPartie.EN_COURS:
+        aide = police.render("Échap : menu", True, (220, 230, 245))
+        ecran.blit(aide, aide.get_rect(bottomleft=(15, ecran.get_height() - 10)))
         dessiner_chrono(ecran, police, partie.duree_secondes())
         dessiner_compteurs_tirs(
             ecran, police, partie.tirs_normaux, partie.mines_lancees

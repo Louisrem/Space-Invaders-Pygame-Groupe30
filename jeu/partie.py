@@ -60,9 +60,12 @@ class Partie:
 
         self.debut = None
         self.fin = None
+        self.debut_pause = None
 
-        if self.etat == EtatPartie.EN_COURS:
+        if self.etat in (EtatPartie.EN_COURS, EtatPartie.PAUSE):
             self.debut = monotonic()
+        if self.etat == EtatPartie.PAUSE:
+            self.debut_pause = self.debut
 
         self.bonus = None
         self.tours_avant_bonus = None
@@ -154,6 +157,19 @@ class Partie:
             self.debut = monotonic()
             self.etat = EtatPartie.EN_COURS
 
+    def mettre_en_pause(self):
+        """Suspend le jeu et fige le chronomètre."""
+        if self.etat == EtatPartie.EN_COURS:
+            self.debut_pause = monotonic()
+            self.etat = EtatPartie.PAUSE
+
+    def reprendre(self):
+        """Reprend le jeu en retirant le temps passé en pause du chrono."""
+        if self.etat == EtatPartie.PAUSE:
+            self.debut += monotonic() - self.debut_pause
+            self.debut_pause = None
+            self.etat = EtatPartie.EN_COURS
+
     def _terminer(self, etat_final):
         """Mémorise l'heure de fin et applique l'état de fin demandé."""
         self.fin = monotonic()
@@ -168,15 +184,17 @@ class Partie:
     def duree_secondes(self):
         """Calcule la durée écoulée depuis le début de la partie.
 
-        :return: Durée entière en secondes, figée à la fin ou nulle
-            avant le début.
+        :return: Durée entière en secondes, figée en pause et à la fin.
         :rtype: int
         """
         if self.debut is None:
             return 0
 
-        fin = self.fin if self.fin is not None else monotonic()
-        return int(fin - self.debut)
+        if self.fin is not None:
+            return int(self.fin - self.debut)
+        if self.debut_pause is not None:
+            return int(self.debut_pause - self.debut)
+        return int(monotonic() - self.debut)
 
     def _appliquer_impact(self, ennemi):
         """Applique un impact et compte les ennemis éliminés."""
