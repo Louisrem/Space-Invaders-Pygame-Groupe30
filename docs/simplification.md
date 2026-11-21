@@ -24,7 +24,8 @@ Le code passe d'environ 1 800 à 800 lignes (docstrings comprises).
 - **Boss polymorphe** : `Boss` redéfinit `subir_impact()` et tire plus vite
   dès qu'il est blessé. `Tireur` est aussi une sous-classe d'`Ennemi`.
 - **Aucun nom d'image dans `jeu/`** : c'est `interface/affichage.py` qui
-  associe chaque classe à son image (`IMAGES_ENNEMIS`, `nom_image_projectile`).
+  associe chaque classe à son image (`IMAGES`, `nom_image()`). Une nouvelle
+  sous-classe sans image prend celle de sa classe mère (parcours du `__mro__`).
 - **Encapsulation** (cours 04) : `vies`, `pv`, et tout l'état de `Partie`
   (`score`, `etat`, `niveau`, `flotte`, `joueur`, listes de tirs) sont en
   lecture seule avec `@property` ; les listes sont rendues en tuple pour

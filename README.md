@@ -69,14 +69,16 @@ tests/               tests unitaires de la logique
 Pour ajouter :
 
 - **un ennemi** : sa classe dans [ennemis.py](jeu/ennemis.py), une lettre dans
-  `CATALOGUE_ENNEMIS` de [flotte.py](jeu/flotte.py), son image dans
-  `assets/images/ennemis/` et dans `IMAGES_ENNEMIS` de [affichage.py](interface/affichage.py),
-  puis la lettre dans [vagues.py](jeu/vagues.py) ;
+  `CATALOGUE_ENNEMIS` de [flotte.py](jeu/flotte.py), puis la lettre dans
+  [vagues.py](jeu/vagues.py) ;
 - **une arme** : une sous-classe de `Projectile` dans [projectiles.py](jeu/projectiles.py),
-  une touche dans `ARMES` de [main.py](main.py), et son image dans
-  `nom_image_projectile()` de [affichage.py](interface/affichage.py) ;
+  puis une touche dans `ARMES` de [main.py](main.py) ;
 - **un comportement de tir** : une sous-classe de `ComportementTir` dans
   [ennemis.py](jeu/ennemis.py).
+
+Sans rien d'autre, une nouvelle classe prend l'image de sa classe mère. Pour
+lui donner sa propre image, mets le PNG dans `assets/images/` et ajoute une
+ligne dans `FICHIERS_IMAGES` et `IMAGES` de [affichage.py](interface/affichage.py).
 
 ## Tests
 

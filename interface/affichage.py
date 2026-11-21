@@ -6,19 +6,27 @@ import pygame
 
 from jeu.constantes import EtatPartie
 from jeu.ennemis import Boss, Ennemi, Tireur
-from jeu.projectiles import Mine
+from jeu.projectiles import Mine, Projectile
 from jeu.vaisseau import Vaisseau
 
 DOSSIER_ASSETS = Path(__file__).resolve().parent.parent / "assets"
 DOSSIER_IMAGES = DOSSIER_ASSETS / "images"
-NOMS_PROJECTILES = ("tir_joueur", "tir_ennemi", "mine", "mine_armee")
 
-# Classe d'ennemi -> image dans assets/images/ennemis/.
+# Fichiers PNG à charger, rangés par sous-dossier de assets/images/.
+FICHIERS_IMAGES = {
+    "ennemis": ("simple", "tireur", "boss"),
+    "projectiles": ("tir_joueur", "tir_ennemi", "mine", "mine_armee"),
+}
+
+# Classe -> nom de l'image (ou fonction qui le choisit selon l'état de l'objet).
 # C'est l'interface qui choisit les images : jeu/ ne connaît aucun fichier.
-IMAGES_ENNEMIS = {
+# Une sous-classe sans ligne ici prend l'image de sa classe mère.
+IMAGES = {
     Ennemi: "simple",
     Tireur: "tireur",
     Boss: "boss",
+    Projectile: lambda tir: "tir_joueur" if tir.direction < 0 else "tir_ennemi",
+    Mine: lambda mine: "mine_armee" if mine.armee else "mine",
 }
 BLANC = (255, 255, 255)
 
@@ -43,18 +51,26 @@ def charger_images(taille_ecran):
         "fond": pygame.transform.smoothscale(fond, taille_ecran),
         "vaisseau": pygame.transform.scale(vaisseau, (Vaisseau.LARGEUR, Vaisseau.HAUTEUR)),
     }
-    for nom in IMAGES_ENNEMIS.values():
-        images[nom] = _charger(DOSSIER_IMAGES / "ennemis" / f"{nom}.png")
-    for nom in NOMS_PROJECTILES:
-        images[nom] = _charger(DOSSIER_IMAGES / "projectiles" / f"{nom}.png")
+    for dossier, noms in FICHIERS_IMAGES.items():
+        for nom in noms:
+            images[nom] = _charger(DOSSIER_IMAGES / dossier / f"{nom}.png")
     return images
 
 
-def nom_image_projectile(projectile):
-    """Choisit l'image d'un projectile selon sa classe et son état."""
-    if isinstance(projectile, Mine):
-        return "mine_armee" if projectile.armee else "mine"
-    return "tir_joueur" if projectile.direction < 0 else "tir_ennemi"
+def nom_image(objet):
+    """Trouve le nom de l'image d'un ennemi ou d'un projectile.
+
+    On remonte les classes de l'objet (type(objet).__mro__) : la classe
+    elle-même d'abord, puis sa classe mère, etc. Une nouvelle sous-classe
+    sans image à elle prend donc celle de sa classe mère.
+
+    :raises KeyError: Si aucune classe de l'objet n'a d'image.
+    """
+    for classe in type(objet).__mro__:
+        if classe in IMAGES:
+            image = IMAGES[classe]
+            return image(objet) if callable(image) else image
+    raise KeyError(f"Pas d'image pour {type(objet).__name__}")
 
 
 def dessiner_texte(ecran, police, texte, centre):
@@ -80,11 +96,11 @@ def dessiner_partie(ecran, police, partie, images):
     ecran.blit(images["vaisseau"], (joueur.x, joueur.y))
 
     for ennemi in partie.flotte:
-        ecran.blit(images[IMAGES_ENNEMIS[type(ennemi)]], (ennemi.x, ennemi.y))
+        ecran.blit(images[nom_image(ennemi)], (ennemi.x, ennemi.y))
 
     for projectile in partie.projectiles_joueur + partie.projectiles_ennemis:
         x, y, _, _ = projectile.zone_collision()
-        ecran.blit(images[nom_image_projectile(projectile)], (x, y))
+        ecran.blit(images[nom_image(projectile)], (x, y))
 
     largeur = ecran.get_width()
     ecran.blit(police.render(f"Score : {partie.score}", True, BLANC), (15, 15))
