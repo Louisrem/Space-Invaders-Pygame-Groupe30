@@ -6,6 +6,7 @@ ennemis_touches(). La partie traite toutes les armes de la même façon
 """
 
 from .constantes import HAUTEUR_TERRAIN, EvenementPartie
+from .entite import Entite
 
 
 def rectangles_se_chevauchent(zone_a, zone_b):
@@ -25,7 +26,7 @@ def rectangles_se_chevauchent(zone_a, zone_b):
     return chevauchement_x and chevauchement_y
 
 
-class Projectile:
+class Projectile(Entite):
     """Tir vertical qui touche le premier ennemi rencontré.
 
     Utilisé par le joueur (vers le haut) et par les ennemis (vers le bas).
@@ -47,11 +48,8 @@ class Projectile:
         :param direction: -1 vers le haut ou 1 vers le bas.
         :type direction: int
         """
-        self.x = x
-        self.y = y
+        super().__init__(x, y)
         self.direction = direction
-        self.largeur = self.LARGEUR
-        self.hauteur = self.HAUTEUR
 
     def __repr__(self):
         """Représentation de débogage, par exemple « Mine(x=400, y=316) »."""
@@ -62,7 +60,10 @@ class Projectile:
         self.y += self.VITESSE * self.direction
 
     def zone_collision(self):
-        """Renvoie le rectangle (x, y, largeur, hauteur) du tir."""
+        """Renvoie le rectangle (x, y, largeur, hauteur) du tir.
+
+        Redéfinie : pour un tir, x est le centre et y le bas du tir.
+        """
         return self.x - self.largeur // 2, self.y - self.hauteur, self.largeur, self.hauteur
 
     def est_sorti(self, hauteur_ecran):

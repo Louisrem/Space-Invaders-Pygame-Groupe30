@@ -1,7 +1,9 @@
 """Déplacement et vies du vaisseau du joueur."""
 
+from .entite import Entite
 
-class Vaisseau:
+
+class Vaisseau(Entite):
     """Représente le vaisseau du joueur."""
 
     LARGEUR = 48
@@ -17,10 +19,7 @@ class Vaisseau:
         :param vies: Nombre de vies au départ.
         :type vies: int
         """
-        self.x = x
-        self.y = y
-        self.largeur = self.LARGEUR
-        self.hauteur = self.HAUTEUR
+        super().__init__(x, y)
         self._vies = vies
 
     @property
@@ -45,10 +44,6 @@ class Vaisseau:
         """
         limite_droite = largeur_ecran - self.largeur
         self.x = min(max(0, self.x + distance), limite_droite)
-
-    def zone_collision(self):
-        """Renvoie le rectangle (x, y, largeur, hauteur) du vaisseau."""
-        return self.x, self.y, self.largeur, self.hauteur
 
     def perdre_vie(self):
         """Retire une vie si le vaisseau en a encore."""

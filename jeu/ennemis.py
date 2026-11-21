@@ -11,6 +11,7 @@
 from abc import ABC, abstractmethod
 from random import randint
 
+from .entite import Entite
 from .projectiles import Projectile
 
 
@@ -64,7 +65,7 @@ class TirSimple(ComportementTir):
         return randint(self._delai // 2, self._delai * 3 // 2)
 
 
-class Ennemi:
+class Ennemi(Entite):
     """Représente un ennemi de la flotte.
 
     Composition : l'ennemi possède un ComportementTir qui décide quand il
@@ -86,10 +87,7 @@ class Ennemi:
         :param pv: Points de vie au départ.
         :type pv: int
         """
-        self.x = x
-        self.y = y
-        self.largeur = self.LARGEUR
-        self.hauteur = self.HAUTEUR
+        super().__init__(x, y)
         self._pv = pv
         self._comportement_tir = comportement_tir or SansTir()
 
@@ -97,10 +95,6 @@ class Ennemi:
     def pv(self):
         """Points de vie restants, en lecture seule."""
         return self._pv
-
-    def zone_collision(self):
-        """Renvoie le rectangle (x, y, largeur, hauteur) de l'ennemi."""
-        return self.x, self.y, self.largeur, self.hauteur
 
     def __repr__(self):
         """Représentation de débogage, par exemple « Boss(x=218, y=60, pv=3) ».

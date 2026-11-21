@@ -47,7 +47,7 @@ Le code passe d'environ 1 800 à 800 lignes (docstrings comprises).
 | 2 types d'ennemis ou plus | `Ennemi`, `Tireur(Ennemi)`, `Boss(Ennemi)` à 3 PV |
 | 2 types d'armes ou plus | `Projectile`, `Mine(Projectile)` |
 | Collisions et score | `rectangles_se_chevauchent()` (projectiles.py), `Partie.score` |
-| Héritage | `Tireur(Ennemi)`, `Boss(Ennemi)`, `Mine(Projectile)`, `SansTir`/`TirSimple(ComportementTir)` |
+| Héritage | `Entite` → `Vaisseau`, `Ennemi`, `Projectile` ; `Tireur(Ennemi)`, `Boss(Ennemi)`, `Mine(Projectile)`, `SansTir`/`TirSimple(ComportementTir)` |
 | Composition | `Partie` → `Flotte`, `Vaisseau` ; `Ennemi` → `ComportementTir` |
 | Polymorphisme | `tirer()`, `ennemis_touches()`, `Boss.subir_impact()` |
 | Logique séparée de l'affichage | `jeu/` n'importe jamais Pygame et ne connaît aucune image |
