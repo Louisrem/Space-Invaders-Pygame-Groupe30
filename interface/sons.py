@@ -1,35 +1,29 @@
-"""Charge et joue les effets WAV des événements de partie."""
+"""Joue les effets WAV associés aux événements de la partie."""
 
 import pygame
 
-from jeu.evenements_partie import EvenementPartie
+from jeu.constantes import EvenementPartie
 
-from .ressources import DOSSIER_ASSETS
+from .affichage import DOSSIER_ASSETS
 
 
 class SonsJeu:
-    """Associe les événements du jeu à des effets préchargés."""
+    """Associe chaque événement du jeu à un effet sonore."""
 
     def __init__(self):
-        """Charge les effets au démarrage si l'audio est disponible."""
+        """Charge les effets si l'audio est disponible."""
         self._effets = {}
-        if pygame.mixer.get_init() is None:
-            try:
-                pygame.mixer.init()
-            except pygame.error:
-                return
+        try:
+            pygame.mixer.init()
+        except pygame.error:
+            return
 
         dossier = DOSSIER_ASSETS / "sons" / "effets"
         for evenement in EvenementPartie:
-            chemin = dossier / f"{evenement.value}.wav"
-            self._effets[evenement] = pygame.mixer.Sound(chemin)
+            self._effets[evenement] = pygame.mixer.Sound(dossier / f"{evenement.value}.wav")
 
-    def jouer_evenements(self, evenements):
-        """Joue chaque effet au plus une fois pendant ce tour.
-
-        :param evenements: Événements récupérés auprès de la partie.
-        :type evenements: list[EvenementPartie]
-        """
+    def jouer(self, evenements):
+        """Joue chaque effet au plus une fois pendant ce tour."""
         for evenement in dict.fromkeys(evenements):
             effet = self._effets.get(evenement)
             if effet is not None:

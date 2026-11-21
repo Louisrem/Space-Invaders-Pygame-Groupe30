@@ -1,103 +1,99 @@
 # Space Invaders · Groupe 30
 
-Un jeu d’arcade en Python et Pygame. Pilote le Delta, termine les cinq vagues
-et bats ton meilleur score.
+Projet de Programmation intermédiaire (HELMo, B2 IA). Version orientée objet
+du [Space Invaders de départ](https://github.com/attreyabhatt/Space-Invaders-Pygame),
+conservé dans [archive/](archive/).
 
-## Installer et lancer le jeu
+Tu pilotes un vaisseau avec trois vies et tu dois détruire trois vagues
+d'ennemis. La dernière vague contient un boss qui résiste à trois tirs.
 
-### 1. Récupérer le projet
+## Installation
 
-Dans un terminal, lance ces commandes si tu as Git.
-
-```bash
-git clone https://github.com/Louisrem/Space-Invaders-Pygame-Groupe30.git
-cd Space-Invaders-Pygame-Groupe30
-```
-
-Tu peux aussi télécharger le projet depuis **Code → Download ZIP** sur GitHub.
-Décompresse le ZIP, puis ouvre un terminal dans le dossier qui contient
-`main.py` et `requirements.txt`.
-
-### 2. Préparer Python et Pygame
-
-Installe [uv](https://docs.astral.sh/uv/getting-started/installation/) si besoin,
-puis rouvre ton terminal. Depuis le dossier du projet, lance ces deux commandes.
-
-```bash
-uv venv --python 3.12
-uv pip install --python .venv -r requirements.txt
-```
-
-`.venv` est l’environnement Python du jeu. Il contient Python 3.12 et la
-version de Pygame indiquée dans `requirements.txt`.
-
-### 3. Lancer le jeu
+Il faut **Python 3.12** (pygame 2.6.1 n'a pas encore de version prête pour
+Python 3.14 sur macOS). Ouvre un terminal dans le dossier du projet.
 
 **macOS ou Linux**
 
 ```bash
-.venv/bin/python main.py
+python3.12 -m venv .venv
+.venv/bin/pip install -r requirements.txt
 ```
 
-**Windows · PowerShell**
+**Windows (PowerShell)**
 
 ```powershell
-.\.venv\Scripts\python.exe main.py
+py -3.12 -m venv .venv
+.\.venv\Scripts\pip install -r requirements.txt
 ```
 
-Une fenêtre s’ouvre. Appuie sur **Entrée** pour commencer.
-Si PyCharm affiche `No module named pygame`, utilise la commande de lancement
-ci-dessus ou sélectionne le Python du dossier `.venv` comme interpréteur.
+## Lancer le jeu
 
-## Jouer
+| Système | Commande |
+| --- | --- |
+| macOS ou Linux | `.venv/bin/python main.py` |
+| Windows | `.\.venv\Scripts\python main.py` |
+
+## Commandes
 
 | Touche | Action |
 | --- | --- |
-| Entrée | Commencer ou rejouer après une victoire ou une défaite |
-| ← et → | Déplacer le Delta |
-| Espace | Tirer. Un seul tir normal peut être à l’écran à la fois |
-| X | Lancer une mine quand le tableau de bord indique qu’elle est prête |
-| C | Consulter le classement depuis le menu |
-| Échap | Revenir au menu depuis le classement |
+| ← / → | Déplacer le vaisseau |
+| Espace | Tir normal (un seul à la fois) |
+| X | Lancer une mine (une seule à la fois) |
+| Entrée | Jouer ou rejouer |
 
-La mine s’arrête à mi-écran et explose quand un ennemi passe à proximité.
-Après le lancement, élimine cinq ennemis pour la recharger.
-Un cœur donne une vie et un bouclier absorbe un impact. La partie est perdue
-si tu n’as plus de vies ou si la flotte atteint la ligne du vaisseau.
-En vague 5, les lignes orange annoncent les colonnes du barrage du boss.
+La mine monte jusqu'au milieu de l'écran, s'arrête, puis explose quand un
+ennemi s'approche. Elle touche tous les ennemis dans son rayon.
+La partie est perdue si tu n'as plus de vie ou si la flotte atteint ton
+vaisseau.
 
-Le bilan affiche le score, le temps et le nombre de tirs et de mines utilisés.
-Les résultats sont conservés sur ta machine dans `classement.json`.
+## Organisation du code
 
-## Reprendre le code
+```
+main.py              boucle du jeu : lit le clavier, actualise, dessine
+jeu/                 règles du jeu, sans Pygame
+  constantes.py      taille du terrain, états et événements de la partie
+  vagues.py          grilles des vagues d'ennemis
+  partie.py          Partie : tirs, collisions, vagues, victoire/défaite
+  vaisseau.py        Vaisseau du joueur
+  projectiles.py     armes : Projectile, Mine
+  ennemis.py         Ennemi, Tireur, Boss et comportements de tir
+  flotte.py          catalogue des lettres et Flotte
+interface/           tout ce qui utilise Pygame
+  affichage.py       chargement des images et dessin
+  sons.py            effets sonores
+tests/               tests unitaires de la logique
+```
 
-Commence par le [guide de reprise](docs/guide_extension.md). Il explique
-comment modifier une vague, ajouter un comportement de tir et changer un son.
+Pour ajouter :
 
-| Tu veux modifier… | Ouvre… |
-| --- | --- |
-| Les rangées d’une vague ou le bonus associé | [jeu/vagues.py](jeu/vagues.py) |
-| Les types d’ennemis disponibles | [Le catalogue](jeu/entites/ennemis/catalogue.py) |
-| La façon dont les ennemis tirent | [Les comportements de tir](jeu/entites/ennemis/comportements_tir.py) |
-| Les collisions, le score ou la recharge de la mine | [jeu/partie.py](jeu/partie.py) |
-| Le menu, les sprites ou les effets sonores | [interface/](interface/) et [assets/](assets/) |
+- **un ennemi** : sa classe dans [ennemis.py](jeu/ennemis.py), une lettre dans
+  `CATALOGUE_ENNEMIS` de [flotte.py](jeu/flotte.py), son image dans
+  `assets/images/ennemis/` et dans `IMAGES_ENNEMIS` de [affichage.py](interface/affichage.py),
+  puis la lettre dans [vagues.py](jeu/vagues.py) ;
+- **une arme** : une sous-classe de `Projectile` dans [projectiles.py](jeu/projectiles.py),
+  une touche dans `ARMES` de [main.py](main.py), et son image dans
+  `nom_image_projectile()` de [affichage.py](interface/affichage.py) ;
+- **un comportement de tir** : une sous-classe de `ComportementTir` dans
+  [ennemis.py](jeu/ennemis.py).
 
-Le [programme de départ](archive/) et les [notes d’analyse](docs/notes.md)
-permettent de retrouver le point de départ du projet.
-
-### Lancer les tests
-
-Depuis le dossier du projet, exécute la commande de ton système. Les tests
-vérifient les règles du jeu sans ouvrir de fenêtre.
-
-**macOS ou Linux**
+## Tests
 
 ```bash
 .venv/bin/python -m unittest discover -s tests
 ```
 
-**Windows · PowerShell**
+Sous Windows : `.\.venv\Scripts\python -m unittest discover -s tests`.
 
-```powershell
-.\.venv\Scripts\python.exe -m unittest discover -s tests
+### Mesurer la couverture des tests
+
+`coverage` indique quel pourcentage des lignes de `jeu/` est exécuté par les
+tests (environ 96 % aujourd'hui). Il n'est pas nécessaire pour jouer.
+
+```bash
+.venv/bin/pip install coverage
+.venv/bin/python -m coverage run --source=jeu -m unittest discover -s tests
+.venv/bin/python -m coverage report
 ```
+
+Sous Windows, remplace `.venv/bin/` par `.\.venv\Scripts\`.

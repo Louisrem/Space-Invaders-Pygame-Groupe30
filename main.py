@@ -1,127 +1,62 @@
-"""Lance le jeu et relie les entrées clavier, la logique et l'affichage.
-"""
+"""Lance le jeu : relie le clavier, la logique (jeu/) et l'affichage (interface/)."""
 
 import pygame
 
-from interface.ecrans import dessiner_classement, dessiner_fin_partie, dessiner_menu
-from interface.rendu import dessiner_partie
-from interface.ressources import (
-    charger_fond,
-    charger_sprite_vaisseau,
-    charger_sprites_bonus,
-    charger_sprites_ennemis,
-    charger_sprites_projectiles,
-)
+from interface.affichage import charger_images, dessiner_partie
 from interface.sons import SonsJeu
-from jeu.classement import enregistrer_resultat, meilleurs_resultats
-from jeu.entites.ennemis.flotte import Flotte
-from jeu.entites.vaisseau import Vaisseau
-from jeu.etat_partie import EtatPartie
+from jeu.constantes import HAUTEUR_TERRAIN, LARGEUR_TERRAIN, EtatPartie
 from jeu.partie import Partie
-from jeu.terrain import HAUTEUR_TERRAIN, LARGEUR_TERRAIN
-from jeu.vagues import VAGUES
+from jeu.projectiles import Mine, Projectile
 
+# Touche -> arme. Pour ajouter une arme, crée une sous-classe de
+# Projectile et ajoute une ligne ici.
+ARMES = {
+    pygame.K_SPACE: Projectile,
+    pygame.K_x: Mine,
+}
+VITESSE_JOUEUR = 5
 
-def creer_partie(etat_initial):
-    """Crée le vaisseau et la partie prêts pour la première vague.
-
-    :param etat_initial: État de départ, au menu ou directement en jeu.
-    :type etat_initial: EtatPartie
-    :return: Le vaisseau et la partie.
-    :rtype: tuple[Vaisseau, Partie]
-    """
-    joueur = Vaisseau(376, 550)
-    flotte = Flotte(VAGUES[1])
-    partie = Partie(flotte, [], etat_initial=etat_initial)
-    return joueur, partie
 
 def main():
     """Ouvre la fenêtre et exécute la boucle du jeu."""
-    pygame.display.init()
+    pygame.init()
     ecran = pygame.display.set_mode((LARGEUR_TERRAIN, HAUTEUR_TERRAIN))
-    fond = charger_fond(ecran.get_size())
-    sons = SonsJeu()
     pygame.display.set_caption("Space Invaders - Groupe 30")
-    horloge = pygame.time.Clock()
-    en_cours = True
-
-    joueur, partie = creer_partie(EtatPartie.MENU)
-    sprite_vaisseau = charger_sprite_vaisseau((joueur.largeur, joueur.hauteur))
-    sprites_ennemis = charger_sprites_ennemis()
-    sprites_projectiles = charger_sprites_projectiles()
-    sprites_bonus = charger_sprites_bonus()
-    classement_affiche = None
-
-    pygame.font.init()
+    images = charger_images(ecran.get_size())
+    sons = SonsJeu()
     police = pygame.font.Font(None, 32)
+    horloge = pygame.time.Clock()
+
+    partie = Partie()
+    en_cours = True
 
     while en_cours:
         for evenement in pygame.event.get():
             if evenement.type == pygame.QUIT:
                 en_cours = False
-            elif classement_affiche is not None:
-                if evenement.type == pygame.KEYDOWN and evenement.key == pygame.K_ESCAPE:
-                    classement_affiche = None
-            elif (
-                partie.etat in (EtatPartie.MENU, EtatPartie.PAUSE)
-                and evenement.type == pygame.KEYDOWN
-                and evenement.key == pygame.K_c
-            ):
-                classement_affiche = meilleurs_resultats()
-            elif evenement.type == pygame.KEYDOWN and evenement.key == pygame.K_ESCAPE:
-                if partie.etat == EtatPartie.EN_COURS:
-                    partie.mettre_en_pause()
-                elif partie.etat in (EtatPartie.VICTOIRE, EtatPartie.DEFAITE):
-                    joueur, partie = creer_partie(EtatPartie.MENU)
-            elif evenement.type == pygame.KEYDOWN and evenement.key == pygame.K_RETURN:
-                if partie.etat == EtatPartie.MENU:
+            elif evenement.type == pygame.KEYDOWN:
+                if evenement.key == pygame.K_RETURN:
+                    if partie.etat in (EtatPartie.VICTOIRE, EtatPartie.DEFAITE):
+                        partie = Partie()
                     partie.demarrer()
-                elif partie.etat == EtatPartie.PAUSE:
-                    partie.reprendre()
-                elif partie.etat in (EtatPartie.VICTOIRE, EtatPartie.DEFAITE):
-                    joueur, partie = creer_partie(EtatPartie.EN_COURS)
-            elif evenement.type == pygame.KEYDOWN and evenement.key == pygame.K_SPACE:
-                partie.tirer_normal(joueur)
-            elif evenement.type == pygame.KEYDOWN and evenement.key == pygame.K_x:
-                partie.tirer_mine(joueur, ecran.get_height())
+                elif evenement.key in ARMES:
+                    partie.tirer(ARMES[evenement.key])
 
-        ecran.blit(fond, (0, 0))
-        if partie.etat in (EtatPartie.MENU, EtatPartie.PAUSE):
-            if classement_affiche is None:
-                dessiner_menu(ecran, police, en_pause=partie.etat == EtatPartie.PAUSE)
-            else:
-                dessiner_classement(ecran, police, classement_affiche)
-            pygame.display.flip()
-            horloge.tick(60)
-            continue
+        touches = pygame.key.get_pressed()
+        if touches[pygame.K_LEFT]:
+            partie.deplacer_joueur(-VITESSE_JOUEUR)
+        if touches[pygame.K_RIGHT]:
+            partie.deplacer_joueur(VITESSE_JOUEUR)
 
-        if partie.etat == EtatPartie.EN_COURS:
-            touches = pygame.key.get_pressed()
+        partie.actualiser()
+        sons.jouer(partie.recuperer_evenements())
 
-            if touches[pygame.K_LEFT]:
-                joueur.deplacer(-5, ecran.get_width())
-
-            if touches[pygame.K_RIGHT]:
-                joueur.deplacer(5, ecran.get_width())
-
-            partie.actualiser(joueur, ecran.get_width(), ecran.get_height())
-            sons.jouer_evenements(partie.recuperer_evenements())
-
-            if partie.etat in (EtatPartie.VICTOIRE, EtatPartie.DEFAITE):
-                enregistrer_resultat(partie.resultat())
-
-        dessiner_partie(
-            ecran, police, joueur, partie, sprite_vaisseau, sprites_ennemis,
-            sprites_projectiles, sprites_bonus
-        )
-        if partie.etat in (EtatPartie.VICTOIRE, EtatPartie.DEFAITE):
-            dessiner_fin_partie(ecran, police, partie)
-
+        dessiner_partie(ecran, police, partie, images)
         pygame.display.flip()
-
         horloge.tick(60)
 
     pygame.quit()
+
 
 if __name__ == "__main__":
     main()

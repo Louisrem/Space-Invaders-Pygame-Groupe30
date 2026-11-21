@@ -1,122 +1,137 @@
 """Vérifie les règles d'une partie sans ouvrir de fenêtre."""
 
+import random
 import unittest
-from unittest.mock import patch
 
-from jeu.entites.ennemis.flotte import Flotte
-from jeu.entites.projectiles import Projectile
-from jeu.entites.vaisseau import Vaisseau
-from jeu.etat_partie import EtatPartie
+from jeu.constantes import EtatPartie, EvenementPartie
+from jeu.ennemis import Boss
 from jeu.partie import Partie
+from jeu.projectiles import Mine, Projectile
 
 
 class TestPartie(unittest.TestCase):
     """Tests unitaires de l'évolution d'une partie."""
 
-    def setUp(self):
-        """Crée un vaisseau neuf pour chaque test."""
-        self.joueur = Vaisseau(376, 550)
-
     def test_le_menu_ne_fait_pas_avancer_la_flotte(self):
-        """Vérifie que la flotte bouge seulement après le démarrage."""
-        flotte = Flotte(("N",))
-        partie = Partie(flotte, [], etat_initial=EtatPartie.MENU)
-        position = flotte.ennemis[0].x
+        """La flotte bouge seulement après le démarrage."""
+        partie = Partie({1: ("N",)})
+        ennemi = list(partie.flotte)[0]
+        position = ennemi.x
 
-        partie.actualiser(self.joueur, 800, 600)
-        self.assertEqual(flotte.ennemis[0].x, position)
+        partie.actualiser()
+        self.assertEqual(ennemi.x, position)
 
         partie.demarrer()
-        partie.actualiser(self.joueur, 800, 600)
-        self.assertGreater(flotte.ennemis[0].x, position)
+        partie.actualiser()
+        self.assertGreater(ennemi.x, position)
 
-    def test_la_pause_fige_le_jeu_et_le_chronometre(self):
-        """Vérifie que la reprise conserve la flotte et exclut l'attente."""
-        flotte = Flotte(("N",))
-        with patch("jeu.partie.monotonic", return_value=10) as horloge:
-            partie = Partie(flotte, [])
-            position = flotte.ennemis[0].x
-            horloge.return_value = 15
-            partie.mettre_en_pause()
-
-            horloge.return_value = 35
-            partie.actualiser(self.joueur, 800, 600)
-            self.assertEqual(partie.etat, EtatPartie.PAUSE)
-            self.assertEqual(flotte.ennemis[0].x, position)
-            self.assertEqual(partie.duree_secondes(), 5)
-
-            partie.reprendre()
-            horloge.return_value = 37
-            partie.actualiser(self.joueur, 800, 600)
-            self.assertEqual(partie.etat, EtatPartie.EN_COURS)
-            self.assertGreater(flotte.ennemis[0].x, position)
-            self.assertEqual(partie.duree_secondes(), 7)
-
-    def test_une_flotte_vide_passe_a_la_vague_suivante(self):
-        """Vérifie qu'une vague vidée charge la formation suivante."""
-        partie = Partie(Flotte((".",)), [])
-        partie.actualiser(self.joueur, 800, 600)
-        self.assertEqual(partie.niveau, 2)
-        self.assertEqual(len(partie.flotte.ennemis), 15)
-
-    def test_un_ennemi_a_la_hauteur_du_vaisseau_declenche_la_defaite(self):
-        """Vérifie la défaite si la flotte atteint le joueur."""
-        flotte = Flotte(("N",))
-        ennemi = flotte.ennemis[0]
-        ennemi.y = self.joueur.y - ennemi.hauteur
-        partie = Partie(flotte, [])
-
-        partie.actualiser(self.joueur, 800, 600)
-
-        self.assertEqual(partie.etat, EtatPartie.DEFAITE)
-        self.assertEqual(partie.resultat()["issue"], "defaite")
-
-    def test_le_dernier_ennemi_est_touche_au_moment_de_descendre(self):
-        """Vérifie la priorité de la défaite lors d'un impact simultané."""
-        self.joueur.x = 0
-        cas = (
-            (0, EtatPartie.DEFAITE, 1, 0),
-            (1, EtatPartie.EN_COURS, 2, 1),
+    def test_un_seul_tir_de_chaque_arme_a_la_fois(self):
+        """On peut avoir un tir normal et une mine, mais pas deux tirs."""
+        partie = Partie({1: ("N",)}, etat_initial=EtatPartie.EN_COURS)
+        partie.tirer(Projectile)
+        partie.tirer(Projectile)
+        partie.tirer(Mine)
+        self.assertEqual(
+            [type(p) for p in partie.projectiles_joueur], [Projectile, Mine]
         )
-        for marge, etat_attendu, niveau_attendu, score_attendu in cas:
-            with self.subTest(pixels_avant_la_ligne=marge):
-                flotte = Flotte(("N",))
-                flotte.direction = -1
-                ennemi = flotte.ennemis[0]
-                ennemi.x = 0
-                ennemi.y = self.joueur.y - ennemi.hauteur - 25 - marge
-                partie = Partie(flotte, [])
-                partie.tirer_normal(self.joueur)
+        self.assertEqual(
+            partie.recuperer_evenements(),
+            [EvenementPartie.TIR_JOUEUR, EvenementPartie.MINE_LANCEE],
+        )
 
-                partie.actualiser(self.joueur, 800, 600)
+    def test_un_tir_elimine_un_ennemi_et_augmente_le_score(self):
+        """Un tir qui touche un ennemi à 1 PV l'élimine."""
+        partie = Partie({1: ("NN",), 2: ("N",)}, etat_initial=EtatPartie.EN_COURS)
+        ennemi = list(partie.flotte)[0]
+        ennemi.x, ennemi.y = partie.joueur.x, partie.joueur.y - 100
+        partie.tirer(Projectile)
 
-                self.assertEqual(ennemi.y + ennemi.hauteur, self.joueur.y - marge)
-                self.assertEqual(partie.etat, etat_attendu)
-                self.assertEqual(partie.niveau, niveau_attendu)
-                self.assertEqual(partie.score, score_attendu)
-
-    def test_la_mine_se_recharge_apres_cinq_eliminations(self):
-        """Vérifie la recharge de la mine après cinq éliminations."""
-        flotte = Flotte(("NNNNN",))
-        tirs = []
-        partie = Partie(flotte, tirs)
-        partie.tirer_mine(self.joueur, 600)
-
-        cible = flotte.ennemis[0]
-        cible.x, cible.y = 380, 300
-        for _ in range(40):
-            partie.actualiser_mine()
-
-        self.assertIsNone(partie.mine)
+        for _ in range(20):
+            partie.actualiser()
         self.assertEqual(partie.score, 1)
-        partie.tirer_mine(self.joueur, 600)
-        self.assertEqual(partie.mines_lancees, 1)
+        self.assertEqual(len(partie.flotte), 1)
 
-        for ennemi in flotte.ennemis[:]:
-            tirs.append(Projectile(ennemi.x + 20, ennemi.y + 12))
-        partie.gerer_collisions()
-        self.assertEqual(partie.ennemis_avant_mine(), 0)
+    def test_le_boss_resiste_a_deux_tirs(self):
+        """Le boss perd un PV par tir et survit aux deux premiers."""
+        partie = Partie({1: ("B",)}, etat_initial=EtatPartie.EN_COURS)
+        boss = list(partie.flotte)[0]
+        self.assertFalse(boss.subir_impact())
+        self.assertFalse(boss.subir_impact())
+        self.assertTrue(boss.subir_impact())
 
-        partie.tirer_mine(self.joueur, 600)
-        self.assertIsNotNone(partie.mine)
-        self.assertEqual(partie.mines_lancees, 2)
+    def test_le_boss_blesse_tire_plus_souvent(self):
+        """Après un impact, le boss tire plus de projectiles sur la même durée."""
+        def tirs_sur(boss, tours):
+            return sum(len(boss.tirer()) for _ in range(tours))
+
+        random.seed(0)
+        intact = tirs_sur(Boss(0, 0), 600)
+        random.seed(0)
+        blesse = Boss(0, 0)
+        blesse.subir_impact()
+        self.assertGreater(tirs_sur(blesse, 600), intact)
+
+    def test_les_ennemis_tirent_sur_le_vaisseau(self):
+        """Un tir ennemi qui touche le vaisseau lui retire une vie."""
+        partie = Partie({1: ("T",)}, etat_initial=EtatPartie.EN_COURS)
+        joueur = partie.joueur
+        tireur = list(partie.flotte)[0]
+        tireur.y = joueur.y - 60
+
+        for _ in range(300):
+            joueur.x = tireur.x  # le vaisseau reste sous le tireur
+            partie.actualiser()
+            if joueur.vies < 3:
+                break
+        self.assertEqual(joueur.vies, 2)
+        self.assertIn(EvenementPartie.IMPACT_JOUEUR, partie.recuperer_evenements())
+
+    def test_la_mine_armee_touche_les_ennemis_dans_son_rayon(self):
+        """La mine explose près d'un ennemi et touche tous ceux du rayon."""
+        partie = Partie({1: ("NN",), 2: ("N",)}, etat_initial=EtatPartie.EN_COURS)
+        mine = Mine(400, 400)
+        while not mine.armee:
+            mine.avancer()
+        a, b = list(partie.flotte)
+        a.x, a.y = mine.x - 20, mine.y - 30
+        b.x, b.y = mine.x + 30, mine.y - 30
+
+        self.assertEqual(mine.ennemis_touches(partie.flotte), [a, b])
+
+    def test_une_flotte_vide_passe_a_la_vague_suivante_puis_victoire(self):
+        """Une vague vidée charge la suivante ; la dernière donne la victoire."""
+        partie = Partie({1: (".",), 2: (".",)}, etat_initial=EtatPartie.EN_COURS)
+        partie.actualiser()
+        self.assertEqual(partie.niveau, 2)
+        partie.actualiser()
+        self.assertEqual(partie.etat, EtatPartie.VICTOIRE)
+
+    def test_perdre_toutes_ses_vies_donne_la_defaite(self):
+        """La partie se termine quand le vaisseau n'a plus de vie."""
+        partie = Partie({1: ("N",)}, etat_initial=EtatPartie.EN_COURS)
+        for _ in range(3):
+            partie.joueur.perdre_vie()
+        partie.actualiser()
+        self.assertEqual(partie.etat, EtatPartie.DEFAITE)
+
+    def test_l_etat_de_la_partie_est_en_lecture_seule(self):
+        """Vies, score et listes de tirs ne se modifient pas de l'extérieur."""
+        partie = Partie()
+        with self.assertRaises(AttributeError):
+            partie.joueur.vies = 99
+        with self.assertRaises(AttributeError):
+            partie.score = 99
+        with self.assertRaises(AttributeError):
+            partie.projectiles_joueur.append(Projectile(0, 0))
+
+
+    def test_representations_lisibles(self):
+        """__repr__ et __str__ affichent des textes lisibles (cours 3, labo 3)."""
+        self.assertEqual(str(Partie()), "Vague 1 · score 0 · 3 vies")
+        self.assertEqual(repr(Boss(230, 60)), "Boss(x=218, y=60, pv=3)")
+        self.assertEqual(repr(Mine(400, 550)), "Mine(x=400, y=550)")
+        self.assertEqual(repr(Partie().joueur), "Vaisseau(x=376, vies=3)")
+
+
+if __name__ == "__main__":
+    unittest.main()
