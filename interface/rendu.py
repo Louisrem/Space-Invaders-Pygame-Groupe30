@@ -119,35 +119,24 @@ def dessiner_vague(ecran, police, niveau, ennemis_restants):
     ecran.blit(vague, vague.get_rect(midtop=(largeur // 2, 15)))
     ecran.blit(ennemis, ennemis.get_rect(topright=(largeur - 15, 15)))
 
-def dessiner_coeur(ecran, coeur):
-    """Dessine le cœur à la position de son bonus.
-
-    :param ecran: Surface sur laquelle dessiner.
-    :type ecran: pygame.Surface
-    :param coeur: Bonus cœur à dessiner.
-    :type coeur: Coeur
-    """
-    x, y = coeur.x, coeur.y
-    rose = (255, 90, 130)
-    pygame.draw.circle(ecran, rose, (x + 6, y + 6), 6)
-    pygame.draw.circle(ecran, rose, (x + 18, y + 6), 6)
-    pygame.draw.polygon(
-        ecran, rose, [(x, y + 7), (x + 23, y + 7), (x + 12, y + 23)]
-    )
-
-def dessiner_bonus(ecran, bonus):
-    """Dessine le bonus en fonction de son type.
+def dessiner_bonus(ecran, bonus, sprites):
+    """Dessine le sprite du bonus à la position de sa zone de collision.
 
     :param ecran: Surface sur laquelle dessiner.
     :type ecran: pygame.Surface
     :param bonus: Bonus actif sur le terrain.
     :type bonus: Bonus
+    :param sprites: Sprites des bonus indexés par nom.
+    :type sprites: dict[str, pygame.Surface]
     """
     if isinstance(bonus, Coeur):
-        dessiner_coeur(ecran, bonus)
+        sprite = sprites["coeur"]
     elif isinstance(bonus, BonusBouclier):
-        rectangle = pygame.Rect(bonus.zone_collision())
-        pygame.draw.rect(ecran, (80, 190, 255), rectangle, 3)
+        sprite = sprites["bouclier"]
+    else:
+        return
+
+    ecran.blit(sprite, (bonus.x, bonus.y))
 
 
 def dessiner_mine(ecran, mine, sprites):
@@ -240,7 +229,8 @@ def dessiner_compteurs_tirs(ecran, police, tirs_normaux, mines_lancees):
 
 
 def dessiner_partie(
-    ecran, police, joueur, partie, sprite_vaisseau, sprites_ennemis, sprites_projectiles
+    ecran, police, joueur, partie, sprite_vaisseau, sprites_ennemis,
+    sprites_projectiles, sprites_bonus
 ):
     """Dessine le terrain et le tableau de bord.
 
@@ -258,13 +248,15 @@ def dessiner_partie(
     :type sprites_ennemis: dict[str, pygame.Surface]
     :param sprites_projectiles: Images des tirs et de la mine.
     :type sprites_projectiles: dict[str, pygame.Surface]
+    :param sprites_bonus: Images des bonus qui tombent sur le terrain.
+    :type sprites_bonus: dict[str, pygame.Surface]
     """
     dessiner_avertissement_boss(ecran, partie.flotte)
     dessiner_vaisseau(ecran, joueur, sprite_vaisseau)
     dessiner_flotte(ecran, partie.flotte, sprites_ennemis)
 
     if partie.bonus is not None:
-        dessiner_bonus(ecran, partie.bonus)
+        dessiner_bonus(ecran, partie.bonus, sprites_bonus)
     if partie.mine is not None:
         dessiner_mine(ecran, partie.mine, sprites_projectiles)
     if partie.explosion_mine is not None:

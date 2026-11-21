@@ -66,3 +66,12 @@ def charger_sprites_projectiles():
     """
     noms = ("tir_joueur", "tir_ennemi", "tir_boss", "mine", "mine_armee")
     return _charger_sprites("projectiles", noms)
+
+
+def charger_sprites_bonus():
+    """Charge les sprites transparents du cœur et du bouclier.
+
+    :return: Les surfaces indexées par nom de sprite.
+    :rtype: dict[str, pygame.Surface]
+    """
+    return _charger_sprites("bonus", ("coeur", "bouclier"))

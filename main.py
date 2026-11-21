@@ -8,6 +8,7 @@ from interface.rendu import dessiner_partie
 from interface.ressources import (
     charger_fond,
     charger_sprite_vaisseau,
+    charger_sprites_bonus,
     charger_sprites_ennemis,
     charger_sprites_projectiles,
 )
@@ -48,6 +49,7 @@ def main():
     sprite_vaisseau = charger_sprite_vaisseau((joueur.largeur, joueur.hauteur))
     sprites_ennemis = charger_sprites_ennemis()
     sprites_projectiles = charger_sprites_projectiles()
+    sprites_bonus = charger_sprites_bonus()
     classement_affiche = None
 
     pygame.font.init()
@@ -102,7 +104,8 @@ def main():
                 enregistrer_resultat(partie.resultat())
 
         dessiner_partie(
-            ecran, police, joueur, partie, sprite_vaisseau, sprites_ennemis, sprites_projectiles
+            ecran, police, joueur, partie, sprite_vaisseau, sprites_ennemis,
+            sprites_projectiles, sprites_bonus
         )
         if partie.etat in (EtatPartie.VICTOIRE, EtatPartie.DEFAITE):
             dessiner_fin_partie(ecran, police, partie)
