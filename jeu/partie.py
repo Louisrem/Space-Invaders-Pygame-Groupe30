@@ -13,6 +13,8 @@ class Partie:
     du joueur, et l'interface lit son état pour l'afficher.
     """
 
+    Y_JOUEUR = HAUTEUR_TERRAIN - 50   # hauteur du vaisseau sur l'écran
+
     def __init__(self, vagues=VAGUES, etat_initial=EtatPartie.MENU):
         """Prépare le vaisseau et la première vague.
 
@@ -24,7 +26,7 @@ class Partie:
         self._vagues = vagues
         self._niveau = 1
         self._flotte = Flotte(vagues[1])
-        self._joueur = Vaisseau(LARGEUR_TERRAIN // 2 - Vaisseau.LARGEUR // 2, 550)
+        self._joueur = Vaisseau(LARGEUR_TERRAIN // 2 - Vaisseau.LARGEUR // 2, self.Y_JOUEUR)
         self._projectiles_joueur = []
         self._projectiles_ennemis = []
         self._etat = etat_initial
@@ -78,10 +80,14 @@ class Partie:
         if self._etat == EtatPartie.MENU:
             self._etat = EtatPartie.EN_COURS
 
-    def deplacer_joueur(self, distance):
-        """Déplace le vaisseau si la partie est en cours."""
+    def deplacer_joueur(self, sens):
+        """Déplace le vaisseau si la partie est en cours.
+
+        :param sens: -1 vers la gauche, 1 vers la droite.
+        :type sens: int
+        """
         if self._etat == EtatPartie.EN_COURS:
-            self._joueur.deplacer(distance, LARGEUR_TERRAIN)
+            self._joueur.deplacer(sens * Vaisseau.VITESSE, LARGEUR_TERRAIN)
 
     def tirer(self, type_projectile):
         """Lance une arme depuis le vaisseau.

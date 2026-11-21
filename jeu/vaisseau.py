@@ -8,6 +8,7 @@ class Vaisseau(Entite):
 
     LARGEUR = 48
     HAUTEUR = 24
+    VITESSE = 5   # pixels par tour
 
     def __init__(self, x, y, vies=3):
         """Place le vaisseau avec ses vies de départ.

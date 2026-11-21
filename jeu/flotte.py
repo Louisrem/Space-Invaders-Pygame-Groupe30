@@ -34,6 +34,11 @@ class Flotte:
 
     VITESSE = 2
     DESCENTE = 25
+    # Placement de la grille au début d'une vague (en pixels)
+    X_DEPART = 230      # bord gauche de la première colonne
+    Y_DEPART = 60       # haut de la première rangée
+    ECART_COLONNES = 75
+    ECART_RANGEES = 45
 
     def __init__(self, grille):
         """Crée les ennemis décrits par les rangées de la vague.
@@ -47,8 +52,8 @@ class Flotte:
         for ligne, rangee in enumerate(grille):
             for colonne, case in enumerate(rangee):
                 if case != ".":
-                    x = 230 + colonne * 75
-                    y = 60 + ligne * 45
+                    x = self.X_DEPART + colonne * self.ECART_COLONNES
+                    y = self.Y_DEPART + ligne * self.ECART_RANGEES
                     self._ennemis.append(creer_ennemi(case, x, y))
 
     def __iter__(self):

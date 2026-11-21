@@ -132,6 +132,13 @@ class TestPartie(unittest.TestCase):
         self.assertEqual(repr(Mine(400, 550)), "Mine(x=400, y=550)")
         self.assertEqual(repr(Partie().joueur), "Vaisseau(x=376, vies=3)")
 
+    def test_le_vaisseau_avance_de_sa_vitesse(self):
+        """deplacer_joueur(1) avance le vaisseau de Vaisseau.VITESSE pixels."""
+        partie = Partie({1: ("N",)}, etat_initial=EtatPartie.EN_COURS)
+        depart = partie.joueur.x
+        partie.deplacer_joueur(1)
+        self.assertEqual(partie.joueur.x, depart + partie.joueur.VITESSE)
+
 
 if __name__ == "__main__":
     unittest.main()

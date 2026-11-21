@@ -14,7 +14,7 @@ ARMES = {
     pygame.K_SPACE: Projectile,
     pygame.K_x: Mine,
 }
-VITESSE_JOUEUR = 5
+IMAGES_PAR_SECONDE = 60
 
 
 def main():
@@ -44,16 +44,16 @@ def main():
 
         touches = pygame.key.get_pressed()
         if touches[pygame.K_LEFT]:
-            partie.deplacer_joueur(-VITESSE_JOUEUR)
+            partie.deplacer_joueur(-1)
         if touches[pygame.K_RIGHT]:
-            partie.deplacer_joueur(VITESSE_JOUEUR)
+            partie.deplacer_joueur(1)
 
         partie.actualiser()
         sons.jouer(partie.recuperer_evenements())
 
         dessiner_partie(ecran, police, partie, images)
         pygame.display.flip()
-        horloge.tick(60)
+        horloge.tick(IMAGES_PAR_SECONDE)
 
     pygame.quit()
 
