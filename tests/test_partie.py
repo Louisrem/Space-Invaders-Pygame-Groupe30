@@ -84,7 +84,9 @@ class TestPartie(unittest.TestCase):
             if joueur.vies < 3:
                 break
         self.assertEqual(joueur.vies, 2)
-        self.assertIn(EvenementPartie.IMPACT_JOUEUR, partie.recuperer_evenements())
+        evenements = partie.recuperer_evenements()
+        self.assertIn(EvenementPartie.TIR_ENNEMI, evenements)
+        self.assertIn(EvenementPartie.IMPACT_JOUEUR, evenements)
 
     def test_la_mine_armee_touche_les_ennemis_dans_son_rayon(self):
         """La mine explose près d'un ennemi et touche tous ceux du rayon."""

@@ -3,6 +3,7 @@
 import unittest
 
 from interface.affichage import nom_image
+from interface.sons import DOSSIER_SONS, SONS
 from jeu.ennemis import Boss, Ennemi, Tireur
 from jeu.projectiles import Mine, Projectile
 
@@ -28,6 +29,11 @@ class TestAffichage(unittest.TestCase):
 
         self.assertEqual(nom_image(TireurRapide(0, 0)), "tireur")
         self.assertEqual(nom_image(TirDouble(0, 0)), "tir_joueur")
+
+    def test_chaque_son_existe(self):
+        """Tous les fichiers WAV de SONS sont bien dans assets/sons/effets/."""
+        for fichier in SONS.values():
+            self.assertTrue((DOSSIER_SONS / fichier).exists(), fichier)
 
 
 if __name__ == "__main__":

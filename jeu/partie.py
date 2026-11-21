@@ -146,7 +146,10 @@ class Partie:
     def _actualiser_projectiles_ennemis(self):
         """Fait tirer les ennemis, déplace leurs tirs et touche le joueur."""
         for ennemi in self._flotte:
-            self._projectiles_ennemis.extend(ennemi.tirer())
+            tirs = ennemi.tirer()
+            if tirs:
+                self._projectiles_ennemis.extend(tirs)
+                self._evenements.append(EvenementPartie.TIR_ENNEMI)
 
         for projectile in self._projectiles_ennemis[:]:
             projectile.avancer()

@@ -1,6 +1,6 @@
 """Constantes partagées : taille du terrain, états et événements de la partie."""
 
-from enum import Enum
+from enum import Enum, auto
 
 LARGEUR_TERRAIN = 800
 HAUTEUR_TERRAIN = 600
@@ -16,14 +16,15 @@ class EtatPartie(Enum):
 
 
 class EvenementPartie(Enum):
-    """Événements que la logique signale pour que l'interface joue un son.
+    """Ce qui vient de se passer dans la partie.
 
-    La valeur de chaque événement est aussi le nom du fichier WAV joué.
+    La logique les signale, l'interface décide quoi en faire (jouer un son).
     """
 
-    TIR_JOUEUR = "tir_joueur"
-    MINE_LANCEE = "mine_lancee"
-    EXPLOSION_MINE = "explosion_mine"
-    IMPACT_JOUEUR = "impact_joueur"
-    VICTOIRE = "victoire"
-    DEFAITE = "defaite"
+    TIR_JOUEUR = auto()
+    TIR_ENNEMI = auto()
+    MINE_LANCEE = auto()
+    EXPLOSION_MINE = auto()
+    IMPACT_JOUEUR = auto()
+    VICTOIRE = auto()
+    DEFAITE = auto()

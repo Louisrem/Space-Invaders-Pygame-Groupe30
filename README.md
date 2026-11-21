@@ -62,7 +62,7 @@ jeu/                 règles du jeu, sans Pygame
   flotte.py          catalogue des lettres et Flotte
 interface/           tout ce qui utilise Pygame
   affichage.py       chargement des images et dessin
-  sons.py            effets sonores
+  sons.py            effets sonores (quel son pour quel événement)
 tests/               tests unitaires de la logique
 ```
 
