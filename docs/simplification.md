@@ -17,6 +17,9 @@ Le code passe d'environ 1 800 à 800 lignes (docstrings comprises).
 
 ## Amélioré
 
+- **Classe mère `Entite`** : `Vaisseau`, `Ennemi` et `Projectile` en héritent
+  (position, taille, `zone_collision()`, `touche()`). Le test de collision
+  est rangé avec elle dans `entite.py`.
 - **Armes polymorphes** : `Partie.tirer(type_projectile)` accepte n'importe
   quelle sous-classe de `Projectile`. Chaque arme décide elle-même des ennemis
   qu'elle touche (`ennemis_touches()`). Ajouter une arme ne demande plus de
@@ -36,7 +39,13 @@ Le code passe d'environ 1 800 à 800 lignes (docstrings comprises).
   transmettre les touches.
 - **`__repr__` et `__str__`** (cours 3, labo 3) : `print(boss)` affiche
   `Boss(x=218, y=60, pv=3)` et `print(partie)` affiche `Vague 1 · score 0 · 3 vies`.
-- **Couverture des tests** : environ 96 % de `jeu/`, commande dans le README.
+- **Couverture des tests** : environ 98 % de `jeu/`, commande dans le README.
+- **Pas de nombres magiques** : la grille de la flotte, la hauteur du vaisseau,
+  sa vitesse et les images par seconde sont des constantes nommées.
+- **Événements sans fichiers** : `EvenementPartie` ne connaît pas les fichiers
+  WAV (`auto()`), c'est `interface/sons.py` qui choisit le son. Le tir ennemi a
+  son propre événement (`TIR_ENNEMI`).
+- **Score** : chaque ennemi a ses `POINTS` (1, et 5 pour le boss).
 - **README** : installation avec `venv` et `pip`, sans outil supplémentaire.
 
 ## Exigences de la Partie 1
@@ -52,4 +61,4 @@ Le code passe d'environ 1 800 à 800 lignes (docstrings comprises).
 | Composition | `Partie` → `Flotte`, `Vaisseau` ; `Ennemi` → `ComportementTir` |
 | Polymorphisme | `tirer()`, `ennemis_touches()`, `Boss.subir_impact()` |
 | Logique séparée de l'affichage | `jeu/` n'importe jamais Pygame et ne connaît aucune image |
-| Modules et paquetages | paquetages `jeu/` (8 modules) et `interface/` (2 modules) |
+| Modules et paquetages | paquetages `jeu/` (9 modules) et `interface/` (2 modules) |

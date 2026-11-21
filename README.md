@@ -92,7 +92,7 @@ Sous Windows : `.\.venv\Scripts\python -m unittest discover -s tests`.
 ### Mesurer la couverture des tests
 
 `coverage` indique quel pourcentage des lignes de `jeu/` est exécuté par les
-tests (environ 96 % aujourd'hui). Il n'est pas nécessaire pour jouer.
+tests (environ 98 % aujourd'hui). Il n'est pas nécessaire pour jouer.
 
 ```bash
 .venv/bin/pip install coverage
