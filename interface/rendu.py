@@ -1,11 +1,37 @@
 """Affichage du terrain, des objets et du tableau de bord."""
 
+from functools import lru_cache
+from math import pi
+
 import pygame
 
 from jeu.entites.bonus import BonusBouclier, Coeur
 from jeu.entites.ennemis.boss import Boss
 from jeu.entites.projectiles import ProjectileBarrage
 from jeu.etat_partie import EtatPartie
+
+
+@lru_cache(maxsize=16)
+def _creer_halo_bouclier(largeur, hauteur):
+    """Prépare le champ d'énergie transparent pour cette taille de sprite."""
+    halo = pygame.Surface((largeur + 16, hauteur + 16), pygame.SRCALPHA)
+    contour = halo.get_rect().inflate(-6, -6)
+
+    pygame.draw.ellipse(halo, (28, 104, 229, 20), halo.get_rect(), 2)
+    pygame.draw.ellipse(halo, (42, 140, 255, 55), contour.inflate(4, 4), 2)
+    pygame.draw.ellipse(halo, (25, 117, 231, 40), contour)
+    pygame.draw.ellipse(halo, (77, 202, 255, 200), contour, 1)
+    pygame.draw.ellipse(halo, (77, 202, 255, 75), contour.inflate(-4, -4), 1)
+    pygame.draw.arc(halo, (185, 249, 255, 255), contour, 0.58 * pi, 0.95 * pi, 2)
+    pygame.draw.arc(halo, (185, 249, 255, 255), contour, 1.58 * pi, 1.95 * pi, 2)
+    return halo
+
+
+def _dessiner_bouclier(ecran, bouclier, rectangle):
+    """Affiche le halo centré derrière le sprite si le bouclier est actif."""
+    if bouclier is not None and bouclier.actif:
+        halo = _creer_halo_bouclier(*rectangle.size)
+        ecran.blit(halo, halo.get_rect(center=rectangle.center))
 
 
 def dessiner_vaisseau(ecran, vaisseau, sprite):
@@ -19,9 +45,8 @@ def dessiner_vaisseau(ecran, vaisseau, sprite):
     :type sprite: pygame.Surface
     """
     rectangle = pygame.Rect(vaisseau.zone_collision())
+    _dessiner_bouclier(ecran, vaisseau.bouclier, rectangle)
     ecran.blit(sprite, rectangle.topleft)
-    if vaisseau.bouclier is not None and vaisseau.bouclier.actif:
-        pygame.draw.rect(ecran, (80, 190, 255), rectangle, 2)
 
 def dessiner_flotte(ecran, flotte, sprites):
     """Dessine chaque ennemi avec le sprite indiqué par son type.
@@ -35,9 +60,8 @@ def dessiner_flotte(ecran, flotte, sprites):
     """
     for ennemi in flotte.ennemis:
         rectangle = pygame.Rect(ennemi.zone_collision())
+        _dessiner_bouclier(ecran, ennemi.bouclier, rectangle)
         ecran.blit(sprites[ennemi.type_ennemi], rectangle.topleft)
-        if ennemi.bouclier is not None and ennemi.bouclier.actif:
-            pygame.draw.rect(ecran, (80,190,255), rectangle, 2)
 
 def dessiner_avertissement_boss(ecran, flotte):
     """Trace les colonnes annoncées par le boss.
