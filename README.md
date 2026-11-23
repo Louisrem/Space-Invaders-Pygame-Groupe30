@@ -11,7 +11,7 @@ projet Python. Suis les étapes dans l'ordre, sans en sauter.
 
 ## Sommaire
 
-1. [Installer les outils](#étape-1--installer-les-outils)
+1. [Vérifier et installer les outils](#étape-1--vérifier-et-installer-les-outils)
 2. [Récupérer le projet](#étape-2--récupérer-le-projet)
 3. [Préparer le projet](#étape-3--préparer-le-projet)
 4. [Lancer le jeu](#étape-4--lancer-le-jeu)
@@ -22,61 +22,76 @@ projet Python. Suis les étapes dans l'ordre, sans en sauter.
 
 ---
 
-## Étape 1 : installer les outils
+## Étape 1 : vérifier et installer les outils
 
 Tu as besoin de deux programmes : **Git** (pour récupérer le projet) et
-**Python 3.12** (pour le faire tourner).
+**Python 3.12** (pour le faire tourner). Ils sont peut-être déjà sur ton
+ordinateur. On vérifie d'abord, et on installe seulement ce qui manque.
 
-### 1.1 Installer Git
+### 1.1 Ouvrir un terminal
 
-**Windows**
+Un terminal est une fenêtre où on tape des commandes au lieu de cliquer.
 
-1. Va sur <https://git-scm.com/download/win>.
-2. Télécharge l'installateur et lance-le.
-3. Clique sur « Next » à chaque écran. Les choix par défaut conviennent.
+- **Windows** : touche Windows, tape « PowerShell », Entrée.
+- **macOS** : Cmd + Espace, tape « Terminal », Entrée.
+- **PyCharm** : onglet **Terminal** en bas de la fenêtre (icône `>_` à gauche).
+- **VS Code** : menu *Terminal > New Terminal*.
 
-**macOS**
+> 💡 Si tu utilises **PyCharm** ou **VS Code**, tape toutes les commandes de ce
+> README dans leur terminal intégré. Une fois le projet ouvert, ce terminal est
+> déjà placé dans le bon dossier.
 
-1. Ouvre l'application **Terminal** (Cmd + Espace, tape « Terminal »).
-2. Tape `git --version` puis Entrée.
-3. Si Git n'est pas installé, macOS propose de l'installer. Clique sur « Installer ».
+### 1.2 Vérifier ce que tu as déjà
 
-**Vérifier :** dans un terminal, `git --version` doit afficher quelque chose
-comme `git version 2.4x.x`.
+Tape chaque commande puis appuie sur Entrée.
 
-### 1.2 Installer Python 3.12
-
-> ⚠️ Prends bien la version **3.12**. Le jeu utilise pygame 2.6.1, qui ne
-> s'installe pas encore avec Python 3.14 sur macOS.
-
-1. Va sur <https://www.python.org/downloads/>.
-2. Descends jusqu'à « Looking for a specific release ? » et choisis la
-   dernière version **3.12.x**.
-3. Télécharge l'installateur pour ton système et lance-le.
-4. **Sous Windows**, coche la case **« Add python.exe to PATH »** sur le
-   premier écran avant de cliquer sur « Install Now ».
-
-**Vérifier :**
-
-| Système | Commande | Résultat attendu |
-| --- | --- | --- |
-| Windows | `py -3.12 --version` | `Python 3.12.x` |
-| macOS ou Linux | `python3.12 --version` | `Python 3.12.x` |
-
-#### Tu as déjà un autre Python ?
-
-**Tu as déjà Python sur ton ordinateur ?** Vérifie d'abord sa version :
+**Git**
 
 | Système | Commande |
 | --- | --- |
-| Windows | `py --list` (montre toutes les versions installées) |
-| macOS ou Linux | `python3 --version` |
+| Windows, macOS, Linux | `git --version` |
 
-Si tu vois **3.12**, c'est bon, passe à la suite. Si tu vois **3.13 ou 3.14**,
-garde-la et installe 3.12 **à côté**. Les deux versions vivent ensemble sans
-problème, rien à désinstaller.
+- Tu vois `git version 2.xx.x` : ✅ Git est installé, saute l'étape 1.3.
+- Tu vois une erreur (« n'est pas reconnu », « command not found ») : ❌ fais l'étape 1.3.
 
-**Installer Python 3.12 par le terminal**
+**Python 3.12**
+
+| Système | Commande |
+| --- | --- |
+| Windows | `py --list` |
+| macOS ou Linux | `python3.12 --version` |
+
+- Windows : la liste contient une ligne avec **3.12** : ✅ saute l'étape 1.4.
+- macOS ou Linux : tu vois `Python 3.12.x` : ✅ saute l'étape 1.4.
+- Tu vois une erreur, ou seulement d'autres versions (3.11, 3.13, 3.14...) : ❌ fais l'étape 1.4.
+
+> ℹ️ Pourquoi 3.12 et pas la plus récente ? Le jeu utilise pygame 2.6.1, qui ne
+> s'installe pas encore avec Python 3.14 sur macOS. Avec 3.12, tout le monde
+> a la même version et tout marche.
+
+### 1.3 Installer Git (seulement s'il manque)
+
+**Windows**
+
+- Par le terminal : `winget install --id Git.Git -e`
+- Ou par le site : télécharge l'installateur sur <https://git-scm.com/download/win>,
+  lance-le et clique sur « Next » à chaque écran. Les choix par défaut conviennent.
+
+**macOS**
+
+Tape `git --version`. macOS propose d'installer les outils pour développeurs.
+Clique sur « Installer » et attends la fin.
+
+**Linux (Ubuntu)** : `sudo apt install git`
+
+Ferme et rouvre le terminal, puis refais `git --version`.
+
+### 1.4 Installer Python 3.12 (seulement s'il manque)
+
+Si tu as déjà une autre version (3.13, 3.14...), **garde-la**. Python 3.12
+s'installe **à côté**. Les deux versions vivent ensemble sans problème.
+
+**Option A : par le terminal**
 
 - **Windows (PowerShell)** :
 
@@ -84,15 +99,13 @@ problème, rien à désinstaller.
   winget install Python.Python.3.12
   ```
 
-  Réponds `Y` si on te demande d'accepter les conditions. Ferme et rouvre
-  PowerShell, puis vérifie avec `py -3.12 --version`.
+  Réponds `Y` si on te demande d'accepter les conditions.
 
 - **macOS** : il faut Homebrew. Vérifie avec `brew --version`. S'il manque,
   installe-le avec la commande donnée sur <https://brew.sh>. Ensuite :
 
   ```bash
   brew install python@3.12
-  python3.12 --version
   ```
 
 - **Linux (Ubuntu)** :
@@ -101,17 +114,25 @@ problème, rien à désinstaller.
   sudo apt install python3.12 python3.12-venv
   ```
 
+**Option B : par le site**
+
+1. Va sur <https://www.python.org/downloads/>.
+2. Descends jusqu'à « Looking for a specific release ? » et choisis la
+   dernière version **3.12.x**.
+3. Télécharge l'installateur pour ton système et lance-le.
+4. **Sous Windows**, coche la case **« Add python.exe to PATH »** sur le
+   premier écran avant de cliquer sur « Install Now ».
+
+Ferme et rouvre le terminal, puis vérifie :
+
+| Système | Commande | Résultat attendu |
+| --- | --- | --- |
+| Windows | `py -3.12 --version` | `Python 3.12.x` |
+| macOS ou Linux | `python3.12 --version` | `Python 3.12.x` |
+
 > ⚠️ Dans tout ce README, écris toujours `py -3.12` (Windows) ou `python3.12`
 > (macOS, Linux), **jamais** juste `python`. Sinon ton ordinateur prend
-> l'autre version.
-> Si tu as déjà créé un dossier `.venv` avec la mauvaise version, supprime-le
-> et recrée-le.
-
-### 1.3 Ouvrir un terminal (rappel)
-
-- **Windows** : touche Windows, tape « PowerShell », Entrée.
-- **macOS** : Cmd + Espace, tape « Terminal », Entrée.
-- **PyCharm** : onglet **Terminal** en bas de la fenêtre.
+> peut-être une autre version.
 
 ---
 
@@ -141,9 +162,15 @@ problème, rien à désinstaller.
 **Vérifier :** la commande `ls` (macOS) ou `dir` (Windows) doit montrer
 `main.py`, `jeu`, `interface`, `assets` et `tests`.
 
-> 💡 **Avec PyCharm** : menu *File > New > Project from Version Control*,
-> colle l'adresse `https://github.com/Louisrem/Space-Invaders-Pygame-Groupe30.git`
-> et clique sur *Clone*.
+**Ou directement dans ton éditeur** (Git doit quand même être installé) :
+
+- **PyCharm** : sur l'écran d'accueil, *Clone Repository* (ou menu *File >
+  New > Project from Version Control*). Colle l'adresse
+  `https://github.com/Louisrem/Space-Invaders-Pygame-Groupe30.git`, choisis un
+  dossier et clique sur *Clone*. Le projet s'ouvre tout seul.
+- **VS Code** : sur l'écran d'accueil, *Clone Git Repository* (ou Ctrl + Maj + P,
+  tape « Git: Clone »). Colle la même adresse, choisis un dossier, puis clique
+  sur *Open* quand VS Code le propose.
 
 ---
 
@@ -153,7 +180,8 @@ On crée un **environnement virtuel** (`.venv`). C'est un dossier qui contient
 une copie de Python rien que pour ce projet, avec pygame dedans. Ça évite de
 mélanger avec les autres projets de ton ordinateur.
 
-Toutes les commandes se tapent **dans le dossier du projet**.
+Toutes les commandes se tapent **dans le dossier du projet**. Dans PyCharm ou
+VS Code, utilise le terminal intégré (il est déjà dans le bon dossier).
 
 **Windows (PowerShell)**
 
@@ -197,9 +225,32 @@ La mine monte jusqu'au milieu de l'écran, s'arrête, puis explose quand un
 ennemi passe près d'elle. Elle touche tous les ennemis autour.
 Tu perds si tu n'as plus de vie ou si la flotte arrive à ton vaisseau.
 
-> 💡 **Avec PyCharm** : *Settings > Project > Python Interpreter > Add
-> Interpreter > Existing* et choisis `.venv`. Ensuite, clic droit sur
-> `main.py` puis *Run 'main'*.
+### Lancer le jeu depuis PyCharm ou VS Code
+
+Il faut d'abord dire à l'éditeur d'utiliser le Python du dossier `.venv`
+(celui qui contient pygame). Sinon il souligne `import pygame` en rouge et le
+jeu ne démarre pas. À faire une seule fois, après l'étape 3.
+
+**PyCharm**
+
+1. Clique sur le nom de l'interpréteur en bas à droite de la fenêtre (ou menu
+   *Settings > Project > Python Interpreter*).
+2. *Add Interpreter > Add Local Interpreter*.
+3. Choisis *Select existing* (ou *Existing environment*) et indique le fichier :
+   - Windows : `.venv\Scripts\python.exe`
+   - macOS ou Linux : `.venv/bin/python`
+4. Valide avec *OK*. En bas à droite, tu dois voir `Python 3.12 (.venv)`.
+5. Clic droit sur `main.py` puis *Run 'main'*. Les fois suivantes, le bouton
+   ▶ vert en haut à droite suffit.
+
+**VS Code**
+
+1. Installe l'extension **Python** de Microsoft (icône des carrés à gauche,
+   cherche « Python »).
+2. Ctrl + Maj + P (Cmd + Maj + P sur macOS), tape « Python: Select
+   Interpreter » et choisis la ligne qui contient `.venv`.
+3. Ouvre `main.py` et clique sur le bouton ▶ en haut à droite
+   (*Run Python File*).
 
 ---
 
@@ -445,6 +496,10 @@ Lance les tests après **chaque** modification :
 
 Aujourd'hui, **24 tests** passent. Tu dois voir `OK` à la fin.
 
+Dans **PyCharm**, tu peux aussi faire un clic droit sur le dossier `tests` puis
+*Run 'Python tests in tests'*. Dans **VS Code**, le plus simple est de taper la
+commande ci-dessus dans le terminal intégré.
+
 Pour tester ton nouvel ennemi, crée par exemple le fichier
 `tests/test_extensions.py`. Il sera trouvé tout seul par la commande au-dessus
 (son nom commence par `test_`).
@@ -489,8 +544,9 @@ Sous Windows, remplace `.venv/bin/` par `.\.venv\Scripts\`.
 | Message | Solution |
 | --- | --- |
 | `git` n'est pas reconnu | Git n'est pas installé, ou ferme et rouvre le terminal. |
-| `python3.12: command not found` / `py -3.12` ne marche pas | Python 3.12 n'est pas installé (étape 1.2). |
+| `python3.12: command not found` / `py -3.12` ne marche pas | Python 3.12 n'est pas installé (étape 1.4). |
 | `No module named pygame` | Tu as lancé avec un autre Python. Utilise `.venv/bin/python` ou `.\.venv\Scripts\python`. |
+| `import pygame` souligné en rouge dans PyCharm ou VS Code | L'éditeur n'utilise pas le Python du `.venv`. Refais « Lancer le jeu depuis PyCharm ou VS Code » (étape 4). |
 | `No module named jeu` | Tu as lancé un autre fichier. Lance toujours `main.py`. |
 | pip échoue en compilant pygame | Ton `.venv` utilise Python 3.13 ou 3.14. Supprime `.venv` et refais l'étape 3 avec 3.12. |
 | Pas de son | Pas grave, le jeu fonctionne sans carte son. |
