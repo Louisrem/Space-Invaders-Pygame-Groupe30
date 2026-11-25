@@ -3,8 +3,7 @@
 Projet de Programmation intermédiaire (HELMo, Bloc 2 IA).
 Tu pilotes un vaisseau avec trois vies et tu dois détruire trois vagues
 d'ennemis. La dernière vague contient un boss.
-C'est une version orientée objet du [Space Invaders de départ](https://github.com/attreyabhatt/Space-Invaders-Pygame),
-conservé dans `archive/`.
+C'est une version orientée objet du [Space Invaders de départ](https://github.com/attreyabhatt/Space-Invaders-Pygame).
 
 Ce README est fait pour quelqu'un qui n'a **jamais** utilisé Git ni lancé un
 projet Python. Suis les étapes dans l'ordre, sans en sauter.
@@ -276,9 +275,7 @@ Space-Invaders-Pygame-Groupe30/
 │   ├── images/ennemis/       une image par type d'ennemi
 │   ├── images/projectiles/   une image par type de tir
 │   └── sons/effets/          les bruitages
-├── tests/               tests automatiques (unittest)
-├── docs/                notes de développement
-└── archive/             l'ancien jeu de départ. Ne sert plus, n'y touche pas.
+└── tests/               tests automatiques (unittest)
 ```
 
 **La règle la plus importante :** `jeu/` décide, `interface/` montre.
@@ -471,7 +468,6 @@ Garde des rangées de **7 cases maximum**, sinon la flotte dépasse de l'écran.
 | `jeu/partie.py` | c'est le cœur des règles. Change-le seulement si ta fonctionnalité invente une **nouvelle règle** (bonus, bouclier, pause...). |
 | `LARGEUR_TERRAIN`, `HAUTEUR_TERRAIN` | toutes les positions en dépendent. |
 | les noms des PNG existants | `affichage.py` les cherche par leur nom. |
-| `archive/` | ancien code, il n'est plus utilisé. |
 | ajouter `import pygame` dans `jeu/` | la logique doit rester séparée de l'affichage. |
 
 ### 6.7 Idées qui demandent de modifier un peu plus
